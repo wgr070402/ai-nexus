@@ -47,5 +47,6 @@ app.*.map.json
 # Widget Preview related
 .widget_preview/
 
-# Local release assets
-downloads/
+# Local workspace (downloaded attachments / docs)
+项目2/
+.trae-html-share-packages/

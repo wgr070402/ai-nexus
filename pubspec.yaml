@@ -34,6 +34,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  http: ^1.6.0
+  flutter_markdown: ^0.7.7+1
+  shared_preferences: ^2.5.5
+  flutter_secure_storage: ^9.2.2
+  file_picker: ^8.1.4
+  archive: ^3.6.1
+  path_provider: ^2.1.4
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +52,15 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+# file_picker 8.3.7 的传递依赖 flutter_plugin_android_lifecycle 有版本夹击：
+# 2.0.35 要求 compileSdk 36（file_picker 写死 34，checkReleaseAarMetadata 失败），
+# 2.0.17 仍使用已移除的 v1 Android embedding（编译报找不到 PluginRegistry.Registrar）。
+# 2.0.24 已移除 v1 embedding 且 compileSdk=34，恰好兼容 file_picker 8.3.7。
+dependency_overrides:
+  flutter_plugin_android_lifecycle: 2.0.24
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

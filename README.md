@@ -1,17 +1,17 @@
-# ai-nexus
+# ai_nexus
 
-移动端智能助手项目（暂未完整开发）
+A new Flutter project.
 
-基于 Flutter 构建的移动端智能助手应用，目前处于早期开发阶段。
+## Getting Started
 
-## 功能模块
+This project is a starting point for a Flutter application.
 
-- 首页
-- 聊天
-- Agent
-- 项目
-- 设置
+A few resources to get you started if this is your first Flutter project:
 
-## 下载
+- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
 
-APK 安装包可在 [Releases](../../releases) 页面下载。
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

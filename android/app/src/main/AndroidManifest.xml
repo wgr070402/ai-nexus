@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Termux 0.118+ 要求调用 RunCommandService 的应用必须声明该权限，
+         否则会抛 "without permission com.termux.permission.RUN_COMMAND"。 -->
+    <uses-permission android:name="com.termux.permission.RUN_COMMAND" />
+
     <application
         android:label="ai_nexus"
         android:name="${applicationName}"
@@ -31,12 +35,12 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
-    <!-- Required to query activities that can process text, see:
-         https://developer.android.com/training/package-visibility and
-         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
-
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <!-- 包可见性声明（Android 11+）：
+         1) 用于检测 Termux / Termux:API 是否安装及其版本；
+         2) 供 Flutter ProcessTextPlugin 使用。 -->
     <queries>
+        <package android:name="com.termux" />
+        <package android:name="com.termux.api" />
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
