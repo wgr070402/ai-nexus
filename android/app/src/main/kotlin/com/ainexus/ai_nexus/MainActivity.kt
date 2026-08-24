@@ -44,8 +44,9 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        // 注册终端桥接层；通道的具体实现见 TermuxBridge.kt。
+        // 注册终端桥接层；具体实现见 TermuxBridge.kt / ProotBridge.kt。
         TermuxBridge(this, flutterEngine.dartExecutor.binaryMessenger).register()
+        ProotBridge(this, flutterEngine.dartExecutor.binaryMessenger).register()
     }
 
     companion object {

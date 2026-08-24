@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 联网：调用各模型 API 以及首次运行下载内置 Ubuntu rootfs 均需网络。 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- Termux 0.118+ 要求调用 RunCommandService 的应用必须声明该权限，
          否则会抛 "without permission com.termux.permission.RUN_COMMAND"。 -->
     <uses-permission android:name="com.termux.permission.RUN_COMMAND" />

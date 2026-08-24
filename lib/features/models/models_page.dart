@@ -9,8 +9,10 @@ import '../../core/models/chat_models.dart';
 import '../../core/services/app_storage.dart';
 import '../../core/services/llm_service.dart';
 
-/// 服务商预设（OpenAI 兼容 endpoints），供编辑时快速填充。
+/// 服务商预设（OpenAI 兼容 + Anthropic + Gemini），供编辑时快速填充。
 const Map<String, String> _providerBaseUrls = <String, String>{
+  'anthropic': 'https://api.anthropic.com/v1',
+  'gemini': 'https://generativelanguage.googleapis.com/v1beta',
   'deepseek': 'https://api.deepseek.com/v1',
   'openai': 'https://api.openai.com/v1',
   'moonshot': 'https://api.moonshot.cn/v1',

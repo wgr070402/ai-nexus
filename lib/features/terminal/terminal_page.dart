@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../app/theme.dart';
 import '../../core/models/terminal_models.dart';
 import '../../core/services/terminal_controller.dart';
+import '../../services/proot_bridge.dart';
 import '../../services/termux_bridge.dart';
 
 /// 内置终端页面：在 App 内直接执行命令。
@@ -13,8 +15,10 @@ import '../../services/termux_bridge.dart';
 /// 支持：
 ///  - 多条终端会话（可新建/切换/删除，命令与历史持久化）；
 ///  - 命令历史、复制/清屏/停止；
-///  - 两条执行通道：本地 shell（/system/bin/sh，默认兜底）与 Termux（Termux:API，
-///    需真机安装 Termux + Termux:API，完整 Linux/CLI）。
+///  - 两条执行通道：
+///      * 本地 shell（/system/bin/sh，默认兜底，任何设备都可靠可用）；
+///      * 内置 Ubuntu（PRoot，rootless，无需 Termux/root；首次使用需联网
+///        下载并解压 rootfs，规避 Oppo 等机型后台强杀 Termux 的问题）。
 class TerminalPage extends StatefulWidget {
   const TerminalPage({super.key});
 
@@ -32,20 +36,25 @@ class _TerminalPageState extends State<TerminalPage> {
 
   int _historyIndex = -1;
 
-  /// 当前正在执行的会话 id，供「停止」按钮终止本地 shell 进程。
+  /// 当前正在执行的会话 id，供「停止」按钮终止进程。
   String? _currentSessionId;
 
   bool _busy = false;
   // 默认使用本地 shell（/system/bin/sh），在任何设备上都可靠可用；
-  // 用户可手动打开 Termux 开关，走完整 Linux 环境（python/node/git 等），
-  // 但 Termux 在部分国产手机上可能因系统杀后台而不稳定。
-  bool _useTermux = false;
-  TermuxStatus _status = const TermuxStatus(
-    termux: false,
-    termuxVersion: '',
-    termuxApi: false,
-    termuxApiVersion: '',
+  // 用户可手动打开「内置 Ubuntu」开关，走 PRoot 完整 Linux 环境（python/node/git 等）。
+  bool _useProot = false;
+  ProotStatus _proot = const ProotStatus(
+    prootBinary: false,
+    installed: false,
+    downloading: false,
+    phase: '',
+    downloadedBytes: 0,
+    totalBytes: -1,
+    error: '',
+    rootfsPath: '',
+    arch: '',
   );
+  Timer? _prootTimer;
 
   TermSession? get _session => _term.active;
   List<TermCommand> get _entries => _session?.commands ?? <TermCommand>[];
@@ -55,12 +64,13 @@ class _TerminalPageState extends State<TerminalPage> {
   void initState() {
     super.initState();
     _init();
-    _detectTermux();
+    _detectProot();
     HardwareKeyboard.instance.addHandler(_onKey);
   }
 
   @override
   void dispose() {
+    _prootTimer?.cancel();
     HardwareKeyboard.instance.removeHandler(_onKey);
     _term.dispose();
     _input.dispose();
@@ -74,19 +84,68 @@ class _TerminalPageState extends State<TerminalPage> {
     if (mounted) setState(() {});
   }
 
-  Future<void> _detectTermux() async {
+  /// 复制当前 PRoot 状态并覆盖指定字段（ProotStatus 为不可变对象）。
+  ProotStatus _copyProotState({
+    bool? downloading,
+    String? phase,
+    String? error,
+  }) {
+    return ProotStatus(
+      prootBinary: _proot.prootBinary,
+      installed: _proot.installed,
+      downloading: downloading ?? _proot.downloading,
+      phase: phase ?? _proot.phase,
+      downloadedBytes: _proot.downloadedBytes,
+      totalBytes: _proot.totalBytes,
+      error: error ?? _proot.error,
+      rootfsPath: _proot.rootfsPath,
+      arch: _proot.arch,
+    );
+  }
+
+  Future<void> _detectProot() async {
     try {
-      final status = await TermuxBridge.checkInstalled();
+      final status = await ProotBridge.status();
       if (!mounted) return;
       dev.log(
-        'Termux 检测 termux=${status.termux} api=${status.termuxApi} '
-        '签名=${status.termuxSignatureValid} sha256=${status.termuxSha256}',
+        'PRoot 检测 binary=${status.prootBinary} installed=${status.installed} '
+        'downloading=${status.downloading} arch=${status.arch}',
         name: 'TerminalSession',
       );
-      setState(() => _status = status);
+      setState(() => _proot = status);
+      if (status.downloading) _startProotPolling();
     } catch (e) {
-      dev.log('Termux 检测失败：$e', name: 'TerminalSession', error: e);
+      dev.log('PRoot 检测失败：$e', name: 'TerminalSession', error: e);
     }
+  }
+
+  /// 下载解压期间轮询状态，驱动进度条刷新。
+  void _startProotPolling() {
+    _prootTimer?.cancel();
+    _prootTimer = Timer.periodic(const Duration(milliseconds: 400), (_) async {
+      try {
+        final status = await ProotBridge.status();
+        if (!mounted) return;
+        setState(() => _proot = status);
+        if (!status.downloading) {
+          _prootTimer?.cancel();
+          _prootTimer = null;
+        }
+      } catch (e) {
+        dev.log('轮询 PRoot 状态失败：$e', name: 'TerminalSession', error: e);
+      }
+    });
+  }
+
+  /// 触发 rootfs 安装并开始轮询进度。
+  Future<void> _installProot() async {
+    setState(() => _proot = _copyProotState(downloading: true, phase: 'prepare'));
+    try {
+      await ProotBridge.install();
+    } catch (e) {
+      dev.log('触发 PRoot 安装失败：$e', name: 'TerminalSession', error: e);
+    }
+    _detectProot();
   }
 
   /// 键盘 handler：实现命令历史的上下键导航。
@@ -140,7 +199,7 @@ class _TerminalPageState extends State<TerminalPage> {
     _currentSessionId = sessionId;
     final entry = TermCommand(
       command: cmd,
-      executor: _useTermux ? 'termux' : 'local',
+      executor: _useProot ? 'proot' : 'local',
     );
     setState(() {
       session.commands.add(entry);
@@ -151,11 +210,13 @@ class _TerminalPageState extends State<TerminalPage> {
     _scrollToBottom();
 
     try {
-      final result = await TermuxBridge.execute(
-        command: cmd,
-        sessionId: sessionId,
-        useTermux: _useTermux,
-      );
+      final result = _useProot
+          ? await ProotBridge.execute(command: cmd, sessionId: sessionId)
+          : await TermuxBridge.execute(
+              command: cmd,
+              sessionId: sessionId,
+              useTermux: false, // 本地 shell（/system/bin/sh）兜底，无需 Termux
+            );
       if (!mounted) return;
       setState(() {
         entry.executor = result.executor;
@@ -186,12 +247,19 @@ class _TerminalPageState extends State<TerminalPage> {
     _scrollToBottom();
   }
 
-  /// 终止当前正在执行的本地 shell 进程（Termux 通道的取消需在真机按会话动作实现）。
+  /// 终止当前正在执行的进程：PRoot 通道用 cancel，本地 shell 用 kill。
   Future<void> _stop() async {
     final sid = _currentSessionId;
     if (sid == null || sid.isEmpty) return;
-    dev.log('停止会话进程 sessionId=$sid', name: 'TerminalSession');
-    await TermuxBridge.kill(sid);
+    dev.log(
+      '停止会话进程 sessionId=$sid executor=${_useProot ? 'proot' : 'local'}',
+      name: 'TerminalSession',
+    );
+    if (_useProot) {
+      await ProotBridge.cancel(sid);
+    } else {
+      await TermuxBridge.kill(sid);
+    }
   }
 
   void _appendHistory(String cmd) {
@@ -405,46 +473,91 @@ class _TerminalPageState extends State<TerminalPage> {
     );
   }
 
-  /// 顶部的后端状态条：显示 Termux 可用性 + 签名校验结果，并允许切换执行通道。
+  /// 顶部的状态条：显示内置 Ubuntu（PRoot）就绪状态与 rootfs 下载进度，并允许切换执行通道。
   Widget _buildStatusBar() {
+    final proot = _proot;
     final String label;
-    final bool trusted;
-    if (!_status.termux) {
-      label = '未检测到 Termux，当前使用本地 shell';
-      trusted = false;
-    } else if (!_status.termuxSignatureValid) {
-      label = 'Termux ${_status.termuxVersion} 签名校验失败（已回退本地 shell）';
-      trusted = false;
-    } else if (_status.termuxApi) {
-      label = 'Termux ${_status.termuxVersion} · API ${_status.termuxApiVersion} · 签名 OK';
-      trusted = true;
+    final Color dotColor;
+
+    if (proot.downloading) {
+      label = proot.phase == 'extract' ? '正在解压 Ubuntu rootfs …' : '正在下载 Ubuntu rootfs …';
+      dotColor = AppColors.warning;
+    } else if (proot.error.isNotEmpty) {
+      label = '内置 Ubuntu 安装失败：${proot.error}';
+      dotColor = AppColors.danger;
+    } else if (proot.ready) {
+      label = '内置 Ubuntu 就绪（${proot.arch}）';
+      dotColor = AppColors.success;
+    } else if (proot.prootBinary) {
+      label = '已就绪 PRoot，rootfs 未安装';
+      dotColor = AppColors.warning;
     } else {
-      label = 'Termux ${_status.termuxVersion} · 签名 OK（Termux:API 未装）';
-      trusted = true;
+      label = '未检测到 PRoot 二进制，当前仅本地 shell';
+      dotColor = AppColors.warning;
+    }
+
+    // 下载进度描述（已知总量时给出百分比），用于驱动进度条与文案。
+    String? progressText;
+    if (proot.downloading && proot.progress >= 0) {
+      progressText = '${(proot.progress * 100).toStringAsFixed(0)}%';
     }
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: AppColors.surface,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          _StatusDot(value: trusted),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(label,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 8, 4),
+            child: Row(
+              children: <Widget>[
+                _StatusDot(color: dotColor),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(label,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textSecondary)),
+                ),
+                if (progressText != null)
+                  Text(progressText,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColors.textSecondary)),
+                if (!proot.installed && !proot.downloading)
+                  TextButton(
+                    onPressed: _installProot,
+                    child: const Text('安装'),
+                  ),
+                Text('Ubuntu',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: _useProot
+                            ? AppColors.primaryLight
+                            : AppColors.textMuted)),
+                Switch.adaptive(
+                  value: _useProot,
+                  activeTrackColor: AppColors.primary,
+                  onChanged: proot.ready
+                      ? (bool v) => setState(() => _useProot = v)
+                      : null,
+                ),
+              ],
+            ),
           ),
-          Text('Termux',
-              style: TextStyle(
-                  fontSize: 12,
-                  color: _useTermux ? AppColors.primaryLight : AppColors.textMuted)),
-          Switch.adaptive(
-            value: _useTermux,
-            activeTrackColor: AppColors.primary,
-            onChanged: (bool v) => setState(() => _useTermux = v),
-          ),
+          if (proot.downloading)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: proot.progress >= 0 ? proot.progress : null,
+                  backgroundColor: AppColors.border,
+                  color: AppColors.primary,
+                  minHeight: 4,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -509,9 +622,9 @@ class _TerminalPageState extends State<TerminalPage> {
               Text('[${entry.executor}]',
                   style: TextStyle(
                       fontSize: 10,
-                      color: entry.executor == 'termux'
-                          ? AppColors.accent
-                          : AppColors.textMuted)),
+                      color: entry.executor == 'local'
+                          ? AppColors.textMuted
+                          : AppColors.accent)),
             ],
           ),
           if (entry.output.isNotEmpty)
@@ -577,14 +690,13 @@ class _TerminalPageState extends State<TerminalPage> {
   }
 }
 
-/// 状态圆点。
+/// 状态圆点（按颜色区分就绪/下载中/失败等状态）。
 class _StatusDot extends StatelessWidget {
-  const _StatusDot({required this.value});
-  final bool value;
+  const _StatusDot({required this.color});
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final Color color = value ? AppColors.success : AppColors.warning;
     return Container(
       width: 8,
       height: 8,
