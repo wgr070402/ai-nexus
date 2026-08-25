@@ -217,7 +217,7 @@
   .bubble-user{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:6px;}
   .bubble-ai{align-self:flex-start;background:var(--card);color:var(--text);border-bottom-left-radius:6px;}
 
-  /* ===== DSH 工具调用 ===== */
+  /* ===== DeepSeek Harness 工具调用 ===== */
   .tool-call{align-self:flex-start;font-size:12px;color:var(--text-2);background:var(--card);border-radius:8px;padding:6px 10px;display:inline-flex;align-items:center;gap:6px;}
 
   /* ===== Codex 代码 diff ===== */
@@ -310,7 +310,7 @@
       <li>侧边栏 终端 · 群聊（新增入口）</li>
       <li>终端主界面（黑底代码界面 · ls / python 等命令输出）</li>
       <li>加号菜单 技能 Skill（新增）</li>
-      <li>设置 模型与引擎（本地模型 / DSH / Codex / Codex++）</li>
+      <li>设置 模型与引擎（本地模型 / DeepSeek Harness / Codex / Codex++）</li>
       <li>设置 终端环境（多环境 / 自定义 rootfs）</li>
       <li>设置 群聊（并行/讨论 · 上限 10）</li>
       <li>设置 智能体/专家 · 知识库/技能/工作流 · 搜索/多模态/语音</li>
@@ -373,7 +373,7 @@
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-expert"/></svg><span class="label">专家</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-project"/></svg><span class="label">项目</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-term"/></svg><span class="label">终端</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
-        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-zap"/></svg><span class="label">DSH</span><span class="menu-status"></span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-zap"/></svg><span class="label">DeepSeek Harness</span><span class="menu-status"></span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-code"/></svg><span class="label">Codex</span><span class="menu-status ready"></span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-group"/></svg><span class="label">群聊</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
       </div>
@@ -417,7 +417,7 @@
         <div class="t-line"><span class="t-out">Python 3.12.3</span></div>
         <div class="t-line">&nbsp;</div>
         <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span> <span class="t-cmd">npx @deepseek-ai/dsh web</span></div>
-        <div class="t-line"><span class="t-out">DSH server ready → </span><span class="t-dir">http://127.0.0.1:3080</span></div>
+        <div class="t-line"><span class="t-out">DeepSeek Harness server ready → </span><span class="t-dir">http://127.0.0.1:3080</span></div>
         <div class="t-line">&nbsp;</div>
         <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span><span class="t-cur"></span></div>
       </div>
@@ -425,9 +425,9 @@
     </div>
   </div>
 
-  <!-- DSH · 未配置引导 -->
+  <!-- DeepSeek Harness · 未配置引导 -->
   <div class="frame">
-    <div class="frame-label">DSH · 未配置 → 引导去终端<span class="tag">新增</span></div>
+    <div class="frame-label">DeepSeek Harness · 未配置 → 引导去终端<span class="tag">新增</span></div>
     <div class="phone">
       <div class="statusbar">
         <span class="time">9:41</span>
@@ -438,13 +438,13 @@
       </div>
       <div class="nav">
         <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
-        <div class="nav-title">DSH</div>
+        <div class="nav-title">DeepSeek Harness</div>
       </div>
       <div class="body">
         <div class="eng-setup">
           <div class="eng-ico"><svg class="icon" viewBox="0 0 24 24"><use href="#i-zap"/></svg></div>
-          <div class="eng-title">DSH 环境未就绪</div>
-          <div class="eng-desc">DSH 依赖本地服务，需先在终端完成初始化，之后即可直接对话。</div>
+          <div class="eng-title">DeepSeek Harness 环境未就绪</div>
+          <div class="eng-desc">DeepSeek Harness 依赖本地服务，需先在终端完成初始化，之后即可直接对话。</div>
           <div class="eng-steps">
             <div class="eng-step"><span class="n">1</span><span class="txt">打开侧边栏「终端」</span></div>
             <div class="eng-step"><span class="n">2</span><span class="txt">执行 <code>npx @deepseek-ai/dsh web</code> 启动服务</span></div>
@@ -458,9 +458,9 @@
     </div>
   </div>
 
-  <!-- DSH · 已配置对话 -->
+  <!-- DeepSeek Harness · 已配置对话 -->
   <div class="frame">
-    <div class="frame-label">DSH · 已配置 → 直接对话<span class="tag">新增</span></div>
+    <div class="frame-label">DeepSeek Harness · 已配置 → 直接对话<span class="tag">新增</span></div>
     <div class="phone">
       <div class="statusbar">
         <span class="time">9:41</span>
@@ -471,7 +471,7 @@
       </div>
       <div class="nav">
         <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
-        <div class="nav-title">DSH</div>
+        <div class="nav-title">DeepSeek Harness</div>
       </div>
       <div class="body">
         <div class="chat-area">
@@ -680,7 +680,7 @@
       <div class="set-body">
         <div class="group">
           <div class="opt on"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" style="color:#fff"><use href="#i-check"/></svg></span><span class="label">本地 / 云端模型</span></div>
-          <div class="opt"><span class="dot"></span><span class="label">DSH</span><span class="hint">DeepSeek Harness</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">DeepSeek Harness</span></div>
           <div class="opt"><span class="dot"></span><span class="label">Codex</span><span class="hint">OpenAI CLI</span></div>
           <div class="opt"><span class="dot"></span><span class="label">Codex++</span><span class="hint">增强启动器</span></div>
         </div>
@@ -692,7 +692,7 @@
           <div class="row"><span class="label">测试连接</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         </div>
         <div class="group">
-          <div class="row"><span class="label">DSH 服务地址</span><span class="value">127.0.0.1:3080</span></div>
+          <div class="row"><span class="label">DeepSeek Harness 服务地址</span><span class="value">127.0.0.1:3080</span></div>
           <div class="row"><span class="label">Codex 启动命令</span><span class="value">codex</span></div>
         </div>
       </div>
