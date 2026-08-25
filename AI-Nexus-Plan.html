@@ -142,7 +142,8 @@
       <li><span class="tag new">P1</span>合并三个项目的其余功能（记忆 / 搜索 / 技能 / 工作流 / 知识库 / 多模态 / 语音等）。</li>
       <li><span class="tag new">P1</span>侧边栏新增 <strong>DeepSeek Harness</strong> 与 <strong>Codex</strong> 入口，未配置引导 → 终端配置 → 点亮即用。</li>
       <li><span class="tag new">P1</span><strong>环境状态检测</strong>：Python/Node/Shell/DeepSeek Harness/Codex 三态显示（运行中/未配置/配置失败）。</li>
-      <li><span class="tag fix">P1</span><strong>补齐遗漏功能</strong>：Operit 工具分类/权限模式、RikkaHub ASR/Prompt模板/二维码、拾忆跨会话查阅/项目目录/思考/活人感/SOCKS5 等。</li>
+      <li><span class="tag fix">P1</span><strong>补齐遗漏功能（本次做）</strong>：权限模式（无障碍/ADB/Root）、自动重试、思考开关+强度、活人感配置。</li>
+      <li><span class="tag todo">P2</span><strong>后续迭代（本次不做）</strong>：Operit 40+工具分类/Tasker集成/网页开发、RikkaHub ASR/Prompt模板/二维码/HTTP请求头/开发者模式、拾忆跨会话查阅/项目目录/压缩缓存/SOCKS5。</li>
     </ul>
   </div>
   <div class="callout green">
@@ -518,23 +519,27 @@
   <span class="pill">多模态</span>
   <span class="pill">语音 / TTS</span>
 
-  <h4 style="margin-top:20px">补齐遗漏（新增）</h4>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">Operit 40+ 工具分类</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">Tasker 集成</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">权限模式（无障碍/ADB/Root）</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">ASR 语音识别</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">Prompt 模板</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">二维码导入导出</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">HTTP 请求头/体配置</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">开发者模式</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">跨会话查阅</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">项目级工作目录</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">自动重试</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">压缩/缓存命中</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">思考开关+强度</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">活人感配置</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">SOCKS5 代理</span>
-  <span class="pill" style="border-color:var(--red);color:var(--red);">任务通知</span>
+  <h4 style="margin-top:20px">补齐遗漏 — 本次做（P1）</h4>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">权限模式（无障碍/ADB/Root）</span>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">自动重试</span>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">思考开关+强度</span>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">活人感配置</span>
+
+  <h4 style="margin-top:20px">后续迭代（P2/P3，本次不做）</h4>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Operit 40+ 工具分类</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Tasker 集成</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">网页开发/游戏代码生成</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Markdown 高级渲染（LaTeX/Mermaid）</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">ASR 语音识别</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Prompt 模板</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">二维码导入导出</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">HTTP 请求头/体配置</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">开发者模式</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">跨会话查阅</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">项目级工作目录</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">压缩/缓存命中</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">SOCKS5 代理</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">任务通知</span>
 </section>
 
 <!-- ============================================================ -->
@@ -548,7 +553,8 @@
     <tr><td><span class="tag new">P1</span></td><td>终端：内置 proot + 环境配置 + 环境状态检测</td><td>对齐 Operit，三态显示</td></tr>
     <tr><td><span class="tag new">P1</span></td><td>UI：高保真界面 + 侧边栏引擎入口（未配置→终端→点亮）</td><td>按第 4 章落地</td></tr>
     <tr><td><span class="tag new">P1</span></td><td>引擎：DeepSeek Harness + Codex + Codex++ 接入验证</td><td>真机调通</td></tr>
-    <tr><td><span class="tag fix">P1</span></td><td>补齐遗漏功能（Operit 工具分类/权限/RikkaHub ASR/Prompt模板/拾忆活人感/思考等）</td><td>按第 9 章补齐</td></tr>
+    <tr><td><span class="tag fix">P1</span></td><td>补齐遗漏：权限模式 + 自动重试 + 思考开关+强度 + 活人感配置</td><td>低风险体感优化，按第 9 章做</td></tr>
+    <tr><td><span class="tag todo">P2</span></td><td>后续迭代：Operit 工具分类/Tasker/网页开发、RikkaHub ASR/Prompt模板/二维码等</td><td>本次不做，等首次发布后再迭代</td></tr>
     <tr><td><span class="tag todo">P2</span></td><td>单聊：记忆 / 搜索 / 多模态 / 分支 / 翻译 / 语音</td><td>功能对齐，逐个来</td></tr>
     <tr><td><span class="tag todo">P3</span></td><td>Assistant 工具调用打通（run_terminal 等）</td><td>把终端接入 Agent</td></tr>
   </table>
