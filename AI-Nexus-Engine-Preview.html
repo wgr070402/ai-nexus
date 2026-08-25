@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Nexus · 引擎入口方案预览（未并入主稿）</title>
+<style>
+  :root{
+    --white:#FFFFFF;--card:#F7F7F7;--card-2:#F0F0F2;--teal:#00C896;
+    --text:#1A1A1A;--text-2:#8E8E93;--text-3:#C7C7CC;
+    --r-lg:16px;--r-md:12px;--r-top:20px;
+    --shadow:0 2px 8px rgba(0,0,0,.06);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Inter","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#E9EAEE;font-family:var(--font);color:var(--text);-webkit-font-smoothing:antialiased;}
+
+  .doc-head{max-width:1180px;margin:0 auto;padding:40px 24px 8px;}
+  .doc-head h1{font-size:22px;margin:0 0 6px;}
+  .doc-head .sub{color:var(--text-2);font-size:14px;margin:0 0 6px;}
+  .doc-head .note{display:inline-block;font-size:12px;color:#B8860B;background:rgba(245,166,35,.15);padding:4px 10px;border-radius:8px;margin-top:8px;}
+
+  .sec{max-width:1180px;margin:28px auto 0;padding:0 24px;}
+  .sec-title{font-size:17px;font-weight:700;margin:0 0 4px;}
+  .sec-desc{color:var(--text-2);font-size:13px;margin:0 0 18px;line-height:1.7;}
+
+  .board{max-width:1180px;margin:0 auto 40px;padding:0 24px;display:flex;flex-wrap:wrap;gap:28px 24px;justify-content:flex-start;}
+  .frame{display:flex;flex-direction:column;align-items:center;}
+  .frame-label{font-size:13px;color:var(--text-2);margin-bottom:12px;font-weight:600;letter-spacing:.5px;text-align:center;}
+
+  .phone{
+    width:375px;min-height:812px;background:var(--white);border-radius:46px;
+    box-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 6px rgba(0,0,0,.06);
+    overflow:hidden;display:flex;flex-direction:column;position:relative;
+  }
+  .statusbar{height:48px;padding:14px 24px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .statusbar .time{font-size:14px;font-weight:600;}
+  .sb-icons{display:flex;align-items:center;gap:5px;}
+  .body{flex:1;display:flex;flex-direction:column;}
+  .homebar{height:32px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex-shrink:0;}
+  .homebar span{width:134px;height:5px;border-radius:3px;background:rgba(0,0,0,.2);}
+
+  .icon{flex-shrink:0;color:#1A1A1A;}
+  .icon.lg{width:24px;height:24px;} .icon.md{width:22px;height:22px;} .icon.sm{width:18px;height:18px;}
+  .icon.chev{color:#C7C7CC;}
+
+  /* 导航 */
+  .nav{height:52px;display:flex;align-items:center;padding:0 8px;position:relative;flex-shrink:0;}
+  .nav-back{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#1A1A1A;}
+  .nav-title{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:700;}
+
+  /* 聊天气泡 */
+  .chat-area{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;}
+  .bubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.6;}
+  .bubble-user{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:6px;}
+  .bubble-ai{align-self:flex-start;background:var(--card);color:var(--text);border-bottom-left-radius:6px;}
+
+  /* 输入栏 */
+  .composer{padding:10px 10px 12px;flex-shrink:0;}
+  .composer-inner{background:var(--white);border:1px solid #ECECEC;border-radius:999px;box-shadow:var(--shadow);display:flex;align-items:center;padding:6px 8px;gap:6px;}
+  .cbtn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1A1A1A;flex-shrink:0;}
+  .chip{display:flex;align-items:center;gap:3px;background:var(--card);border-radius:999px;padding:6px 10px;font-size:13px;font-weight:600;color:var(--text);flex-shrink:0;}
+  .chip .icon{color:var(--text-2);}
+  .cinput{flex:1;font-size:15px;color:var(--text);outline:none;border:none;background:transparent;min-width:0;}
+  .cinput::placeholder{color:var(--text-3);}
+  .send-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .send-btn.off{color:var(--text-3);} .send-btn.on{color:#fff;background:var(--teal);}
+
+  /* 引擎选择面板（底部 sheet） */
+  .sheet-wrap{position:relative;display:flex;flex-direction:column;min-height:812px;}
+  .sheet-scrim{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.28);}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--white);border-radius:var(--r-top) var(--r-top) 0 0;padding:14px 18px 26px;}
+  .sheet-grab{width:36px;height:4px;border-radius:2px;background:#E4E4E6;margin:0 auto 16px;}
+  .sheet-title{font-size:17px;font-weight:700;margin:0 0 4px;}
+  .sheet-sub{font-size:13px;color:var(--text-2);margin:0 0 12px;}
+  .opt{display:flex;align-items:center;gap:12px;padding:14px 4px;font-size:15px;color:var(--text);}
+  .opt + .opt{border-top:1px solid #F2F2F4;}
+  .opt .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--text-3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .opt.on .dot{border-color:var(--teal);background:var(--teal);}
+  .opt.on .label{font-weight:600;}
+  .opt .label{flex:1;text-align:left;display:flex;flex-direction:column;}
+  .opt .hint{font-size:12px;color:var(--text-3);font-weight:400;margin-top:1px;}
+
+  /* DSH 工具调用 */
+  .tool-call{align-self:flex-start;font-size:12px;color:var(--text-2);background:var(--card);border-radius:8px;padding:6px 10px;display:inline-flex;align-items:center;gap:6px;}
+
+  /* Codex 代码 diff */
+  .code-block{background:var(--card);border-radius:12px;padding:10px 14px;margin:6px 0 2px;overflow:hidden;}
+  .diff-line{white-space:pre;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;line-height:1.75;}
+  .d-ctx{color:var(--text-2);}
+  .d-add{color:#0aa77e;background:rgba(0,200,150,.10);}
+  .d-del{color:#E5484D;background:rgba(229,72,77,.10);}
+  .actionbar{display:flex;gap:10px;padding:2px 0 0;flex-shrink:0;}
+  .btn{flex:1;padding:11px;border-radius:var(--r-md);font-size:15px;font-weight:600;text-align:center;}
+  .btn-accept{background:var(--teal);color:#fff;}
+  .btn-reject{background:var(--card);color:var(--text);border:1px solid #E5E5E7;}
+</style>
+</head>
+<body>
+
+<!-- ============ 图标库 ============ -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-voice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6M8 6v12M12 3v18M16 6v12M20 9v6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+  </defs>
+</svg>
+
+<div class="doc-head">
+  <h1>引擎入口方案预览 · DSH / Codex「从哪里聊天」</h1>
+  <p class="sub">两个方案并列，做给你看效果，暂未并入主设计稿。</p>
+  <span class="note">预览稿 · 定稿后我再合入 AI-Nexus-UI.html</span>
+</div>
+
+<!-- ============ 方案一 ============ -->
+<div class="sec">
+  <div class="sec-title">方案一 · 统一聊天窗 + 顶部切换引擎</div>
+  <div class="sec-desc">
+    不新增页面。打开仍是首页聊天，输入栏把「Auto」换成引擎切换按钮，点开后弹出四引擎面板，选哪个就用哪个引擎在同一个输入框里对话。
+  </div>
+</div>
+<div class="board">
+
+  <div class="frame">
+    <div class="frame-label">方案一 · 聊天窗（输入栏含引擎切换 chip）</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <div class="chat-area">
+          <div class="bubble bubble-ai">你好，我是 DeepSeek，有什么可以帮你？</div>
+          <div class="bubble bubble-user">帮我写一个 Python 快速排序</div>
+          <div class="bubble bubble-ai">好的，以下是实现：</div>
+        </div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <div class="chip">DeepSeek<svg class="icon sm" viewBox="0 0 24 24"><use href="#i-down"/></svg></div>
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <input class="cinput" placeholder="发消息..." />
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="frame-label">方案一 · 点击 chip → 四引擎选择面板</div>
+    <div class="phone sheet-wrap">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="body"></div>
+      <div class="sheet-scrim"></div>
+      <div class="sheet">
+        <div class="sheet-grab"></div>
+        <div class="sheet-title">选择引擎</div>
+        <div class="sheet-sub">同一个聊天窗，切换引擎后即可对话</div>
+        <div class="opt on"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" style="color:#fff"><use href="#i-check"/></svg></span><span class="label">本地 / 云端模型<span class="hint">DeepSeek · GPT · Gemini · Ollama…</span></span></div>
+        <div class="opt"><span class="dot"></span><span class="label">DSH<span class="hint">DeepSeek Harness · 一切皆插件</span></span></div>
+        <div class="opt"><span class="dot"></span><span class="label">Codex<span class="hint">OpenAI CLI · 编码智能体</span></span></div>
+        <div class="opt"><span class="dot"></span><span class="label">Codex++<span class="hint">增强启动器 / 管理工具</span></span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ 方案二 ============ -->
+<div class="sec">
+  <div class="sec-title">方案二 · DSH / Codex 各自独立窗口</div>
+  <div class="sec-desc">
+    侧边栏或底部导航新增「DSH」「Codex」两个入口，各配一个专属对话页：DSH 是 agent 对话（带工具调用流），Codex 是编码工作台（任务 → 代码 diff → 接受/拒绝变更）。
+  </div>
+</div>
+<div class="board">
+
+  <div class="frame">
+    <div class="frame-label">方案二 · DSH 独立对话窗口</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">DSH</div>
+      </div>
+      <div class="body">
+        <div class="chat-area">
+          <div class="bubble bubble-user">帮我查一下今天上海的天气</div>
+          <div class="tool-call"><svg class="icon sm" viewBox="0 0 24 24"><use href="#i-zap"/></svg>调用工具：web_search</div>
+          <div class="bubble bubble-ai">上海今天多云，24–31℃，午后有小雨，记得带伞。</div>
+        </div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <input class="cinput" placeholder="发消息..." />
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="frame-label">方案二 · Codex 独立编码工作台</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="24" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">Codex</div>
+      </div>
+      <div class="body">
+        <div class="chat-area">
+          <div class="bubble bubble-user">给 add(a, b) 写单元测试</div>
+          <div class="bubble bubble-ai">已生成测试，变更如下：</div>
+          <div class="code-block">
+            <div class="diff-line d-ctx"> def add(a, b):</div>
+            <div class="diff-line d-ctx">     return a + b</div>
+            <div class="diff-line d-ctx"></div>
+            <div class="diff-line d-add">+def test_add():</div>
+            <div class="diff-line d-add">+    assert add(1, 2) == 3</div>
+            <div class="diff-line d-add">+    assert add(-1, 1) == 0</div>
+          </div>
+          <div class="actionbar">
+            <div class="btn btn-accept">接受变更</div>
+            <div class="btn btn-reject">拒绝</div>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <input class="cinput" placeholder="描述代码任务..." />
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
