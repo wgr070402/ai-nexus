@@ -206,6 +206,44 @@
   .t-dir{color:#6E9BF5;}
   .t-cur{display:inline-block;width:8px;height:15px;background:var(--teal);vertical-align:-2px;margin-left:3px;animation:blink 1.1s steps(2,start) infinite;}
   @keyframes blink{to{visibility:hidden;}}
+
+  /* ===== 侧边栏状态点 ===== */
+  .menu-status{width:8px;height:8px;border-radius:50%;background:var(--text-3);flex-shrink:0;margin-right:-4px;}
+  .menu-status.ready{background:var(--teal);}
+
+  /* ===== 聊天气泡 ===== */
+  .chat-area{flex:1;padding:16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;}
+  .bubble{max-width:78%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.6;}
+  .bubble-user{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:6px;}
+  .bubble-ai{align-self:flex-start;background:var(--card);color:var(--text);border-bottom-left-radius:6px;}
+
+  /* ===== DSH 工具调用 ===== */
+  .tool-call{align-self:flex-start;font-size:12px;color:var(--text-2);background:var(--card);border-radius:8px;padding:6px 10px;display:inline-flex;align-items:center;gap:6px;}
+
+  /* ===== Codex 代码 diff ===== */
+  .code-block{background:var(--card);border-radius:12px;padding:10px 14px;margin:6px 0 2px;overflow:hidden;}
+  .diff-line{white-space:pre;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;line-height:1.75;}
+  .d-ctx{color:var(--text-2);}
+  .d-add{color:#0aa77e;background:rgba(0,200,150,.10);}
+  .d-del{color:#E5484D;background:rgba(229,72,77,.10);}
+  .actionbar{display:flex;gap:10px;padding:2px 0 0;flex-shrink:0;}
+  .btn{flex:1;padding:11px;border-radius:var(--r-md);font-size:15px;font-weight:600;text-align:center;}
+  .btn-accept{background:var(--teal);color:#fff;}
+  .btn-reject{background:var(--card);color:var(--text);border:1px solid #E5E5E7;}
+
+  /* ===== 引擎未配置引导页 ===== */
+  .eng-setup{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center;}
+  .eng-ico{width:72px;height:72px;border-radius:20px;background:var(--card);display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:#1A1A1A;}
+  .eng-ico .icon{width:34px;height:34px;}
+  .eng-title{font-size:18px;font-weight:700;margin:0 0 8px;}
+  .eng-desc{font-size:14px;color:var(--text-2);line-height:1.7;margin:0 0 22px;}
+  .eng-steps{width:100%;text-align:left;background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:22px;}
+  .eng-step{display:flex;gap:10px;font-size:13px;color:var(--text);padding:6px 0;align-items:flex-start;}
+  .eng-step .n{width:20px;height:20px;border-radius:50%;background:var(--teal);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+  .eng-step .txt{line-height:1.6;text-align:left;}
+  .eng-step code{background:var(--card-2);padding:1px 6px;border-radius:5px;font-size:12px;font-family:"SF Mono",Consolas,monospace;}
+  .eng-btn{width:100%;padding:13px;border-radius:var(--r-md);background:var(--teal);color:#fff;font-size:15px;font-weight:600;text-align:center;}
+  .eng-btn.ghost{background:var(--card);color:var(--text);border:1px solid #E5E5E7;margin-top:10px;}
 </style>
 </head>
 <body>
@@ -232,6 +270,8 @@
     <symbol id="i-memory" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></symbol>
     <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
   </defs>
 </svg>
 
@@ -333,6 +373,8 @@
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-expert"/></svg><span class="label">专家</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-project"/></svg><span class="label">项目</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-term"/></svg><span class="label">终端</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-zap"/></svg><span class="label">DSH</span><span class="menu-status"></span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-code"/></svg><span class="label">Codex</span><span class="menu-status ready"></span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
         <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-group"/></svg><span class="label">群聊</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
       </div>
       <div class="divider"></div>
@@ -374,9 +416,124 @@
         <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span> <span class="t-cmd">python3 --version</span></div>
         <div class="t-line"><span class="t-out">Python 3.12.3</span></div>
         <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span> <span class="t-cmd">npx @deepseek-ai/dsh web</span></div>
+        <div class="t-line"><span class="t-out">DSH server ready → </span><span class="t-dir">http://127.0.0.1:3080</span></div>
+        <div class="t-line">&nbsp;</div>
         <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span><span class="t-cur"></span></div>
       </div>
       <div class="homebar"><span style="background:rgba(255,255,255,.28)"></span></div>
+    </div>
+  </div>
+
+  <!-- DSH · 未配置引导 -->
+  <div class="frame">
+    <div class="frame-label">DSH · 未配置 → 引导去终端<span class="tag">新增</span></div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">DSH</div>
+      </div>
+      <div class="body">
+        <div class="eng-setup">
+          <div class="eng-ico"><svg class="icon" viewBox="0 0 24 24"><use href="#i-zap"/></svg></div>
+          <div class="eng-title">DSH 环境未就绪</div>
+          <div class="eng-desc">DSH 依赖本地服务，需先在终端完成初始化，之后即可直接对话。</div>
+          <div class="eng-steps">
+            <div class="eng-step"><span class="n">1</span><span class="txt">打开侧边栏「终端」</span></div>
+            <div class="eng-step"><span class="n">2</span><span class="txt">执行 <code>npx @deepseek-ai/dsh web</code> 启动服务</span></div>
+            <div class="eng-step"><span class="n">3</span><span class="txt">返回后点下方「检查并开始」</span></div>
+          </div>
+          <div class="eng-btn">去终端配置</div>
+          <div class="eng-btn ghost">检查并开始</div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- DSH · 已配置对话 -->
+  <div class="frame">
+    <div class="frame-label">DSH · 已配置 → 直接对话<span class="tag">新增</span></div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">DSH</div>
+      </div>
+      <div class="body">
+        <div class="chat-area">
+          <div class="bubble bubble-user">帮我查一下今天上海的天气</div>
+          <div class="tool-call"><svg class="icon sm" viewBox="0 0 24 24"><use href="#i-zap"/></svg>调用工具：web_search</div>
+          <div class="bubble bubble-ai">上海今天多云，24–31℃，午后有小雨，记得带伞。</div>
+        </div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <input class="cinput" placeholder="发消息..." />
+            <div class="cbtn plus-btn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Codex · 已配置编码工作台 -->
+  <div class="frame">
+    <div class="frame-label">Codex · 已配置 → 编码工作台<span class="tag">新增</span></div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">Codex</div>
+      </div>
+      <div class="body">
+        <div class="chat-area">
+          <div class="bubble bubble-user">给 add(a, b) 写单元测试</div>
+          <div class="bubble bubble-ai">已生成测试，变更如下：</div>
+          <div class="code-block">
+            <div class="diff-line d-ctx"> def add(a, b):</div>
+            <div class="diff-line d-ctx">     return a + b</div>
+            <div class="diff-line d-ctx"></div>
+            <div class="diff-line d-add">+def test_add():</div>
+            <div class="diff-line d-add">+    assert add(1, 2) == 3</div>
+            <div class="diff-line d-add">+    assert add(-1, 1) == 0</div>
+          </div>
+          <div class="actionbar">
+            <div class="btn btn-accept">接受变更</div>
+            <div class="btn btn-reject">拒绝</div>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <input class="cinput" placeholder="描述代码任务..." />
+            <div class="cbtn plus-btn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
     </div>
   </div>
 
