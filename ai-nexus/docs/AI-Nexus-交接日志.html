@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Nexus · 项目交接日志</title>
+<style>
+  :root {
+    --bg: #0f1117; --panel: #171a23; --panel-2: #1e2230; --border: #2a2f3e;
+    --text: #e6e9f0; --muted: #9aa3b5; --accent: #4f8cff; --accent-2: #7c5cff;
+    --green: #3ecf8e; --amber: #f5a623; --red: #f5576c; --teal: #00C896; --code-bg: #0b0d13;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif; line-height:1.7; font-size:15px; }
+  .layout { display:flex; min-height:100vh; }
+  nav { width:280px; flex-shrink:0; padding:24px 16px; background:var(--panel); border-right:1px solid var(--border); position:sticky; top:0; height:100vh; overflow-y:auto; }
+  nav h2 { font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin:0 0 12px; }
+  nav a { display:block; color:var(--muted); text-decoration:none; padding:7px 10px; border-radius:8px; font-size:14px; }
+  nav a:hover { background:var(--panel-2); color:var(--text); }
+  main { flex:1; padding:40px 48px; max-width:1080px; }
+  header.hero { border-bottom:1px solid var(--border); padding-bottom:28px; margin-bottom:32px; }
+  header.hero h1 { font-size:30px; margin:0 0 8px; }
+  header.hero .sub { color:var(--muted); font-size:15px; }
+  .badges { margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
+  .badge { font-size:12px; padding:3px 10px; border-radius:999px; border:1px solid var(--border); color:var(--muted); background:var(--panel-2); }
+  .badge.accent { color:var(--accent); border-color:var(--accent); }
+  .badge.green { color:var(--green); border-color:var(--green); }
+  .badge.amber { color:var(--amber); border-color:var(--amber); }
+  section { margin-bottom:48px; }
+  h2.sec { font-size:22px; margin:0 0 6px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+  h2.sec .num { color:var(--accent); margin-right:8px; }
+  h3 { font-size:17px; margin:28px 0 10px; color:#cdd5e6; }
+  h4 { font-size:15px; margin:20px 0 8px; color:#b9c2d4; }
+  p { color:#c6cddb; margin:8px 0; }
+  .muted { color:var(--muted); }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; }
+  th,td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; background:var(--panel-2); white-space:nowrap; }
+  tr:last-child td { border-bottom:none; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:6px; font-size:13px; color:#8fd0ff; font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; }
+  a { color:var(--accent); }
+  .tag { display:inline-block; font-size:11px; padding:1px 8px; border-radius:5px; margin-right:6px; font-weight:600; }
+  .tag.done { background:rgba(62,207,142,.15); color:var(--green); }
+  .tag.todo { background:rgba(245,166,35,.15); color:var(--amber); }
+  .tag.new { background:rgba(79,140,255,.18); color:var(--accent); }
+  .tag.fix { background:rgba(245,87,108,.15); color:var(--red); }
+  .tag.risk { background:rgba(245,87,108,.12); color:var(--red); }
+  .tag.doing { background:rgba(124,92,255,.18); color:var(--accent-2); }
+  ul { padding-left:20px; } li { margin:5px 0; color:#c6cddb; }
+  ol { padding-left:22px; } ol li { margin:6px 0; color:#c6cddb; }
+  .callout { border-left:3px solid var(--accent); background:rgba(79,140,255,.07); padding:12px 16px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .callout.amber { border-color:var(--amber); background:rgba(245,166,35,.07); }
+  .callout.green { border-color:var(--green); background:rgba(62,207,142,.07); }
+  .callout.red { border-color:var(--red); background:rgba(245,87,108,.07); }
+  .kv { display:flex; gap:8px 28px; flex-wrap:wrap; font-size:14px; margin:6px 0; }
+  .kv b { color:var(--text); }
+  .kv span { color:var(--muted); }
+  footer { color:var(--muted); font-size:13px; border-top:1px solid var(--border); padding-top:20px; margin-top:20px; }
+  @media (max-width:820px){ .layout{flex-direction:column;} nav{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border);} main{padding:24px 18px;} }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <h2>目录</h2>
+  <a href="#s0">⭐ 给接手 AI 的第一句话</a>
+  <a href="#s1">1. 项目定位</a>
+  <a href="#s2">2. 需求来源</a>
+  <a href="#s3">3. 技术栈与决策</a>
+  <a href="#s4">4. 里程碑总览</a>
+  <a href="#s5">5. 模块进度明细</a>
+  <a href="#s6">6. 变更记录</a>
+  <a href="#s7">7. 待办清单</a>
+  <a href="#s8">8. 引擎接入说明</a>
+  <a href="#s9">9. 环境要求与编译</a>
+  <a href="#s10">10. 风险与注意事项</a>
+  <a href="#s11">11. 对话记录</a>
+  <a href="#s12">12. 余额监控</a>
+  <a href="#s13">13. 代码文件清单</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>AI Nexus · 项目交接日志</h1>
+  <div class="sub">单聊 + 群聊（多智能体）+ 终端 + 四引擎 · Android AI 应用 · 完整制作过程记录</div>
+  <div class="badges">
+    <span class="badge accent">Flutter / Android 原生</span>
+    <span class="badge amber">⏸️ 已暂停（M1 完成 · M2 核心完成）</span>
+    <span class="badge green">最近更新：2026-08-26 00:44:00</span>
+  </div>
+</header>
+
+<!-- 0 -->
+<section id="s0">
+  <h2 class="sec"><span class="num">0</span>⭐ 给接手 AI 的第一句话</h2>
+  <div class="callout green">
+    <strong>你是接手本项目的 AI 或开发者。请按此顺序行动：</strong>
+    <ol>
+      <li>先读完本文件（这就是交接说明书，包含了项目全貌、进度、决策、待办、风险）。</li>
+      <li>再读需求来源：<code>AI-Nexus-开发制作文档.html</code> 与 <code>AI-Nexus-UI设计稿.html</code>（与本文件同目录 <code>docs/</code>）。</li>
+      <li>看第 4、5 节了解「已完成 / 进行中 / 未完成」。</li>
+      <li>从第 7 节「待办清单」挑未完成项继续做，不要重复已完成的工作。</li>
+    </ol>
+  </div>
+  <p class="muted">本文件是「唯一事实来源」，任何改动都必须同步更新本文件（进度、变更记录、待办）。</p>
+</section>
+
+<!-- 1 -->
+<section id="s1">
+  <h2 class="sec"><span class="num">1</span>项目定位</h2>
+  <p>以 <strong>Operit AI</strong>（系统自动化 + 完整 Linux 终端）、<strong>RikkaHub</strong>（多模型聊天体验）、<strong>拾忆 ShiYi</strong>（记忆 / 项目 / 技能 / 子代理）三者之长，合成一个 Android 应用：</p>
+  <ul>
+    <li><strong>打开即聊天</strong>：启动直达单聊界面，随手切模型。</li>
+    <li><strong>多智能体群聊</strong>：一个会话里混入「模型 / 智能体 / 专家」，最多 10 个，支持并行与讨论两种模式。</li>
+    <li><strong>Operit 同款终端</strong>：内置完整 Linux（proot Ubuntu 24.04），开箱即用。</li>
+    <li><strong>四引擎</strong>：<code>本地/云端模型</code> + <code>DeepSeek Harness</code> + <code>Codex</code> + <code>Codex++</code>，并列可选。</li>
+    <li><strong>环境状态检测</strong>：终端配置后自动检测 Python/Node/Shell/DeepSeek Harness/Codex 状态（运行中/未配置/配置失败）。</li>
+  </ul>
+</section>
+
+<!-- 2 -->
+<section id="s2">
+  <h2 class="sec"><span class="num">2</span>需求来源（唯一依据）</h2>
+  <table>
+    <tr><th>文件</th><th>作用</th><th>位置</th></tr>
+    <tr><td><code>AI-Nexus-开发制作文档.html</code></td><td>完整开发规范（11 章 + 附录）：项目定位、需求汇总、UI 文字规范、单聊/群聊/终端/引擎/能力层设计、实施路线、待确认事项</td><td>docs/</td></tr>
+    <tr><td><code>AI-Nexus-UI设计稿.html</code></td><td>UI 高保真设计稿：全部页面像素级还原（首页/侧边栏/输入栏/设置/终端/引擎引导/环境状态/群聊等）</td><td>docs/</td></tr>
+    <tr><td><code>AI-Nexus-交接日志.html</code></td><td>本文件：制作过程全程记录（进度/决策/变更/待办/风险）</td><td>docs/</td></tr>
+  </table>
+  <p class="muted">需求文档第 11 章「待确认事项」T-1 ~ T-5 已全部确认，需求已冻结，可直接按文档实施。</p>
+</section>
+
+<!-- 3 -->
+<section id="s3">
+  <h2 class="sec"><span class="num">3</span>技术栈与决策（已确认，勿推翻）</h2>
+  <table>
+    <tr><th>项</th><th>选型</th><th>理由</th></tr>
+    <tr><td>框架</td><td>Flutter + Dart（Material 3）</td><td>需求文档明确「Flutter / Android」</td></tr>
+    <tr><td>状态管理</td><td>Riverpod</td><td>多引擎/多会话/流式复杂异步状态，类型安全可测试</td></tr>
+    <tr><td>路由</td><td>go_router</td><td>页面多、嵌套导航清晰</td></tr>
+    <tr><td>网络</td><td>dio + SSE 流式</td><td>流式中切模型需要可取消的流（CancelToken）</td></tr>
+    <tr><td>本地存储</td><td>Isar + shared_preferences</td><td>结构化数据用 Isar（快/类型安全），配置项用 prefs</td></tr>
+    <tr><td>终端</td><td>原生 Kotlin 桥（proot 内置 Ubuntu 24.04）</td><td>需求要求「和 Operit 一模一样」</td></tr>
+    <tr><td>交付</td><td>代码存手机共享存储，电脑端编译 APK</td><td>本机无 Flutter SDK</td></tr>
+  </table>
+  <div class="callout amber">
+    <strong>待定决策（后续再定）</strong>：终端 proot 具体实现（libproot 库 vs 命令行 proot）；Codex/Codex++ 在 Android 的接入方式（待真机调通）；多模态视觉识别供应商。
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="s4">
+  <h2 class="sec"><span class="num">4</span>里程碑总览</h2>
+  <table>
+    <tr><th>里程碑</th><th>内容</th><th>优先级</th><th>状态</th></tr>
+    <tr><td><strong>M1</strong></td><td>UI 高保真落地（全部页面还原）</td><td>—</td><td><span class="tag done">✅ 已完成</span></td></tr>
+    <tr><td><strong>M2</strong></td><td>单聊：直达 + 流式 + 流式中切模型</td><td>P0</td><td><span class="tag doing">🚧 进行中</span></td></tr>
+    <tr><td><strong>M3</strong></td><td>群聊：成员统一 + 上限10 + 并行/讨论式</td><td>P0/P1</td><td><span class="tag todo">⬜ 未开始</span></td></tr>
+    <tr><td><strong>M4</strong></td><td>引擎层：Harness/Codex/Codex++ + 环境状态检测</td><td>P1</td><td><span class="tag todo">⬜ 未开始</span></td></tr>
+    <tr><td><strong>M5</strong></td><td>终端：内置 proot Ubuntu 24.04 + 深色界面</td><td>P1</td><td><span class="tag todo">⬜ 未开始</span></td></tr>
+    <tr><td><strong>M6</strong></td><td>能力层补齐：权限模式 + 自动重试 + 思考 + 活人感</td><td>P1</td><td><span class="tag todo">⬜ 未开始</span></td></tr>
+  </table>
+</section>
+
+<!-- 5 -->
+<section id="s5">
+  <h2 class="sec"><span class="num">5</span>模块进度明细</h2>
+  <p class="muted">图例：✅ 已完成 · 🚧 进行中 · 🟡 部分完成（UI 已做/逻辑未接） · ⬜ 未开始 · ⚠️ 有风险</p>
+
+  <h3>工程骨架</h3>
+  <ul>
+    <li>✅ 项目根目录 <code>/storage/emulated/0/ai-nexus/</code> 建立</li>
+    <li>✅ <code>docs/</code> 需求文档入库（3 个 HTML：开发制作文档 + UI设计稿 + 本交接日志）</li>
+    <li>✅ Flutter 工程骨架（pubspec.yaml / main.dart / 目录结构）</li>
+    <li>✅ 设计 token 与主题（主色 #00C896 等）</li>
+  </ul>
+
+  <h3>M1 · UI 页面（逐个还原）</h3>
+  <ul>
+    <li>✅ 首页（汉堡键 + 输入栏 + "内容由 AI 生成"）</li>
+    <li>✅ 侧边栏（专家/项目/终端/Harness/Codex/群聊 + 任务区）</li>
+    <li>✅ 聊天输入栏（空态/有内容态 + 加号弹出菜单）</li>
+    <li>✅ 设置页（记忆库/主题/语言/字体/帮助/通知/日志/反馈）</li>
+    <li>✅ 补充配置：模型与引擎</li>
+    <li>✅ 补充配置：终端环境</li>
+    <li>✅ 补充配置：环境状态面板（三态）</li>
+    <li>✅ 补充配置：群聊</li>
+    <li>✅ 补充配置：智能体/专家</li>
+    <li>✅ 补充配置：知识库/技能/工作流</li>
+    <li>✅ 补充配置：搜索/多模态/语音</li>
+    <li>✅ 终端主界面（深色代码风格）</li>
+    <li>✅ DeepSeek Harness 未配置引导页 + 已配置对话页</li>
+    <li>✅ Codex 编码工作台（diff + 接受/拒绝）</li>
+  </ul>
+
+  <h3>M2 · 单聊（P0）</h3>
+  <ul>
+    <li>✅ 打开即聊天（底部导航，默认聊天）</li>
+    <li>✅ 多供应商 / 多模型流式输出（SSE）</li>
+    <li>✅ 顶部模型切换</li>
+    <li>✅ 流式中切模型（中断 + 重答）</li>
+    <li>⬜ 会话历史持久化</li>
+    <li>⬜ 无 API Key 引导页</li>
+  </ul>
+
+  <h3>M3 · 群聊（P0/P1）</h3>
+  <ul>
+    <li>⬜ 成员统一模型（model / agent 两类）</li>
+    <li>⬜ 上限 10（硬校验）</li>
+    <li>⬜ 并行模式</li>
+    <li>⬜ 讨论式模式</li>
+    <li>⬜ 建群弹窗（模型库 / 智能体库混选）</li>
+  </ul>
+
+  <h3>M4 · 引擎层（P1）</h3>
+  <ul>
+    <li>⬜ 本地/云端模型引擎</li>
+    <li>⬜ DeepSeek Harness 引擎（127.0.0.1:3080）</li>
+    <li>⬜ Codex 引擎</li>
+    <li>⬜ Codex++ 引擎</li>
+    <li>🟡 环境状态检测（M1 已做三态 UI 面板，真实探活逻辑未做）</li>
+  </ul>
+
+  <h3>M5 · 终端（P1）</h3>
+  <ul>
+    <li>⬜ 内置 proot Ubuntu 24.04</li>
+    <li>🟡 深色代码界面 + 命令输出 + 光标（M1 已做 UI，真实终端未接）</li>
+    <li>⬜ bash/apt/python 常用包</li>
+    <li>⬜ 命令历史 / 彩色输出</li>
+    <li>⬜ SSH（规划）</li>
+    <li>⬜ 挂载手机文件系统（规划）</li>
+  </ul>
+
+  <h3>M6 · 能力层补齐（P1）</h3>
+  <ul>
+    <li>⬜ 权限模式（无障碍/ADB/Root 三选）</li>
+    <li>⬜ 自动重试</li>
+    <li>⬜ 思考开关 + 强度</li>
+    <li>⬜ 活人感配置</li>
+  </ul>
+</section>
+
+<!-- 6 -->
+<section id="s6">
+  <h2 class="sec"><span class="num">6</span>变更记录（CHANGELOG）</h2>
+  <table>
+    <tr><th>日期</th><th>做了什么</th><th>影响范围</th></tr>
+    <tr>
+      <td>2026-08-25</td>
+      <td>
+        项目初始化：<br>
+        ① 建立项目根目录 <code>/storage/emulated/0/ai-nexus/</code><br>
+        ② 两份需求文档复制进 <code>docs/</code><br>
+        ③ 制作本交接日志（合并进度/决策/变更/待办/风险）
+      </td>
+      <td>新增 <code>docs/</code> 目录（3 个 HTML）</td>
+    </tr>
+    <tr>
+      <td>2026-08-25 23:57:33</td>
+      <td>
+        搭建 Flutter 工程骨架：<br>
+        ① <code>pubspec.yaml</code>（依赖 Riverpod / go_router / dio / Isar / flutter_markdown 等）<br>
+        ② <code>lib/main.dart</code> + <code>lib/app/app.dart</code><br>
+        ③ <code>lib/app/theme.dart</code>（完整设计 token：主色 #00C896、卡片 #F7F7F7、圆角 16/12/20 等）<br>
+        ④ <code>lib/features/home/home_page.dart</code>（占位）<br>
+        ⑤ <code>scripts/check_balance.sh</code>（余额监控脚本）
+      </td>
+      <td>新增 <code>lib/</code>、<code>scripts/</code> 目录；新增 pubspec.yaml / analysis_options.yaml / .gitignore</td>
+    </tr>
+    <tr>
+      <td>2026-08-26 00:30:29</td>
+      <td>
+        M1 · UI 高保真落地 <strong>完成</strong>：<br>
+        ① 设计 token 主题（主色 #00C896 / 卡片 #F7F7F7 / 圆角 16·12·20）<br>
+        ② 通用组件：状态栏、HomeBar、聊天气泡、tool_call、Code diff、设置组件（分组/行/单选/开关）<br>
+        ③ 全部页面：首页、侧边栏、输入栏（三态+加号菜单）、设置页、终端（深色）、引擎引导、Harness 对话、Codex 工作台、环境状态面板、6 个补充配置页<br>
+        ④ 路由（go_router）+ 底部导航 5 Tab
+      </td>
+      <td>M1 完成；共 25 个 Dart 文件约 2360 行</td>
+    </tr>
+    <tr>
+      <td>2026-08-26 00:33:16</td>
+      <td>
+        M2 · 单聊（P0）核心完成：<br>
+        ① 数据模型：ModelConfig（供应商配置）、ChatMessage、Conversation、StreamChunk<br>
+        ② 网络层：ApiClient（dio）+ ChatService（SSE 流式 + 可取消）<br>
+        ③ 状态管理：ChatProvider（Riverpod：send / 流式 / switchModel 中断重答）<br>
+        ④ 聊天界面：ChatPage（消息列表 + 流式显示 + 顶部模型切换 + 流式中切模型）
+      </td>
+      <td>新增 core/models、core/services、features/chat；共 30 Dart 文件约 2963 行</td>
+    </tr>
+    <tr>
+      <td>2026-08-26 00:40:42</td>
+      <td>
+        <strong>暂停开发</strong>：<br>
+        ① 余额监控脚本从 scripts/ 移至 <code>docs/check_balance.sh</code><br>
+        ② 补全「对话记录」章节（20 轮完整时间线）<br>
+        ③ 新增「代码文件清单」章节（§13，列出全部 30 个 Dart 文件）
+      </td>
+      <td>docs/ 新增 check_balance.sh；交接日志新增 §13</td>
+    </tr>
+      </table>
+</section>
+
+<!-- 7 -->
+<section id="s7">
+  <h2 class="sec"><span class="num">7</span>待办清单（TODO）</h2>
+
+  <h3>已完成（M1 · UI 高保真）</h3>
+  <ul>
+    <li>✅ 搭建 Flutter 工程骨架（pubspec.yaml / main.dart / 目录结构）</li>
+    <li>✅ 落地设计 token 与主题（主色 #00C896 / 卡片 #F7F7F7 / 圆角 16·12·20）</li>
+    <li>✅ 还原首页、侧边栏、聊天输入栏（三态）</li>
+    <li>✅ 还原设置页 + 各补充配置子页面</li>
+    <li>✅ 还原终端主界面、引擎引导页、环境状态面板、Codex 工作台</li>
+  </ul>
+
+  <h3>当前未完成事项（暂停时）</h3>
+  <ul>
+    <li>⬜ <strong>android/ 平台目录</strong> —— 需在电脑上 <code>flutter create .</code> 生成（本机无 Flutter SDK）</li>
+    <li>⬜ <strong>真实 API Key 接入</strong> —— chat_provider 中 apiKey 为空，需从凭据读取后填回</li>
+    <li>⬜ <strong>M2 收尾</strong> —— 会话历史持久化（Isar）、无 API Key 引导页</li>
+    <li>⬜ <strong>M3 群聊</strong>（全部）：成员统一 + 上限10 + 并行/讨论式 + 建群弹窗</li>
+    <li>⬜ <strong>M4 引擎接入</strong>：真实调通 DeepSeek Harness（3080）/ Codex / Codex++</li>
+    <li>⬜ <strong>M5 终端 proot</strong>：真实 Ubuntu 24.04 环境 + 命令执行</li>
+    <li>⬜ <strong>M6 能力层</strong>：权限模式 / 自动重试 / 思考开关强度 / 活人感配置</li>
+    <li>⬜ <strong>编译验证</strong> —— 需 Flutter SDK，下月网吧进行</li>
+  </ul>
+
+<h3>后续（M2+）</h3>
+  <ul>
+    <li>🚧 M2 单聊：流式输出 + 流式中切模型（核心完成，待持久化 + 无Key引导）</li>
+    <li>⬜ M3 群聊：成员统一 + 上限10 + 并行/讨论式</li>
+    <li>⬜ M4 引擎：Harness / Codex / Codex++ 接入</li>
+    <li>⬜ M5 终端：proot Ubuntu 24.04</li>
+    <li>⬜ M6 能力层：权限模式 / 自动重试 / 思考 / 活人感</li>
+  </ul>
+</section>
+
+<!-- 8 -->
+<section id="s8">
+  <h2 class="sec"><span class="num">8</span>引擎接入说明（四引擎）</h2>
+  <table>
+    <tr><th>引擎</th><th>接入方式</th><th>说明</th></tr>
+    <tr><td><strong>① 本地/云端模型</strong></td><td>HTTP API 流式</td><td>DeepSeek / OpenAI / Anthropic / Gemini / Kimi / 智谱 / 通义 / OpenRouter / Ollama</td></tr>
+    <tr><td><strong>② DeepSeek Harness</strong></td><td><code>npx @deepseek-ai/dsh web</code> → 127.0.0.1:3080</td><td>底层 Cordis 框架，官方 agent harness</td></tr>
+    <tr><td><strong>③ Codex</strong></td><td><code>codex</code> CLI</td><td>OpenAI 官方命令行编码智能体（Rust），代码生成/重构/调试/执行</td></tr>
+    <tr><td><strong>④ Codex++</strong></td><td>CodexPlusPlus 启动器</td><td>桌面增强启动器（Tauri），经 CDP 协议做供应商切换/会话管理</td></tr>
+  </table>
+  <h3>引擎入口交互流程（已确认）</h3>
+  <ol>
+    <li>侧边栏 DeepSeek Harness / Codex 各有状态点（灰=未配置 / 青=已就绪）。</li>
+    <li>点灰点 → 未配置引导页（三步说明）。</li>
+    <li>「去终端配置」→ 跳终端执行启动命令。</li>
+    <li>启动成功 → 环境检测输出各状态。</li>
+    <li>回侧边栏 → 状态点变青（探活成功）。</li>
+    <li>再点青点 → 直接进对话/编码工作台。</li>
+  </ol>
+  <h3>环境状态检测（三态）</h3>
+  <table>
+    <tr><th>状态</th><th>含义</th><th>颜色</th></tr>
+    <tr><td>运行中</td><td>已安装并可正常调用</td><td>青绿 #00C896</td></tr>
+    <tr><td>未配置</td><td>未安装，可去终端配置</td><td>灰 #C7C7CC</td></tr>
+    <tr><td>配置失败</td><td>已安装但检测异常</td><td>红 #F5576C</td></tr>
+  </table>
+  <p>检测范围：Python（<code>python3 --version</code>）、Node（<code>node --version</code>）、Shell（<code>bash --version</code>）、DeepSeek Harness（端口 3080 探活）、Codex（<code>codex --version</code>）。</p>
+</section>
+
+<!-- 9 -->
+<section id="s9">
+  <h2 class="sec"><span class="num">9</span>环境要求与编译</h2>
+  <div class="callout amber">
+    <strong>关键约束</strong>：本项目的开发环境（手机端）只有 Node，<strong>没有 Flutter SDK</strong>。因此代码编写在此完成，但<strong>编译打包 APK 必须在装有 Flutter SDK 的电脑端执行</strong>。
+  </div>
+  <h4>电脑端准备</h4>
+  <ol>
+    <li>安装 Flutter SDK（<code>https://flutter.dev</code>）+ Android Studio / Android SDK。</li>
+    <li>将本目录 <code>ai-nexus/</code> 拷贝到电脑。</li>
+    <li>执行：</li>
+  </ol>
+  <pre style="background:var(--code-bg);padding:12px 16px;border-radius:8px;overflow-x:auto;"><code>flutter pub get      # 拉取依赖
+flutter run          # 调试运行（连真机或模拟器）
+flutter build apk    # 打包 APK</code></pre>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+  <h2 class="sec"><span class="num">10</span>风险与注意事项</h2>
+  <table>
+    <tr><th>项</th><th>风险</th><th>说明</th></tr>
+    <tr><td>终端 proot Ubuntu</td><td><span class="tag risk">⚠️ 中</span></td><td>需真机测权限/rootfs，对齐 Operit 方案</td></tr>
+    <tr><td>Codex 引擎</td><td><span class="tag risk">⚠️ 中</span></td><td>Rust 二进制，Android 上需特殊处理</td></tr>
+    <tr><td>Codex++ 引擎</td><td><span class="tag risk">⚠️ 高</span></td><td>本身是桌面应用（Tauri），手机可行性存疑，文档自标「真机调通」待验证</td></tr>
+  </table>
+  <div class="callout red">
+    <strong>注意</strong>：P0（单聊直达 + 流式切模型 + 群聊成员模型）风险低、优先级最高，应最先完成并验证；风险项集中在 P1 后期，需专门攻坚。
+  </div>
+  <h3>设计规范速查（M1 必守）</h3>
+  <div class="kv">
+    <span>主色 <b>#00C896</b></span>
+    <span>背景 <b>#FFFFFF</b></span>
+    <span>卡片 <b>#F7F7F7</b></span>
+    <span>主文字 <b>#1A1A1A</b></span>
+    <span>次文字 <b>#8E8E93</b></span>
+    <span>占位 <b>#C7C7CC</b></span>
+    <span>圆角 <b>16 / 12 / 20</b></span>
+    <span>尺寸 <b>375×812</b></span>
+  </div>
+</section>
+
+<!-- 11 -->
+<!-- 11 -->
+<section id="s11">
+  <h2 class="sec"><span class="num">11</span>对话记录（完整时间线）</h2>
+  <p class="muted">完整记录用户与 AI 的每一轮对话：用户要求 + AI 的动作/决策/回复。关键操作标精确时间。</p>
+  <table>
+    <tr><th>轮次</th><th>用户说了什么</th><th>AI 做了什么 / 回复了什么</th></tr>
+    <tr><td>1</td><td>你好</td><td>问候，介绍可提供的帮助</td></tr>
+    <tr><td>2</td><td>这样才能给你上传文件</td><td>说明可接收文件</td></tr>
+    <tr><td>3</td><td>没有上传文件的按钮</td><td>查 Web GUI 代码，说明当前仅支持图片拖拽、无通用上传按钮；但我直接运行在手机上，可读文件系统，无需上传</td></tr>
+    <tr><td>4</td><td>应该还有两个文件：AI-Nexus-开发制作文档-html、AI-Nexus-UI设计稿-html</td><td>找到两份文件在 /storage/emulated/0/Download/Lark/</td></tr>
+    <tr><td>5</td><td>要制作这个项目，先问能不能实现；提到 github thness/dsh-mobile（termux 点击使用的网页端）</td><td>完整读完两份文档；回答「能实现」；解释 dsh-mobile = DeepSeek Harness 的 Android 壳（网页 UI + Termux + proot）</td></tr>
+    <tr><td>6</td><td>源码是上一个项目的、已删除；本项目 = 那两个 HTML 文档</td><td>确认从零开始，唯一依据是两份文档</td></tr>
+    <tr><td>7</td><td>（AI 提问技术路线）用户选择</td><td>确定技术路线：Flutter/Android 原生 App（按文档原样）</td></tr>
+    <tr><td>8</td><td>flutter sdk 是什么</td><td>解释 Flutter SDK = 编译工具包（代码→APK）</td></tr>
+    <tr><td>9</td><td>没有电脑影不影响后续制作</td><td>说明：写代码不受影响，编译 APK 需要电脑端 SDK</td></tr>
+    <tr><td>10</td><td>文档里是否全部能完成（含接入引擎）除了打包</td><td>诚实回答：代码全能写；终端 proot / Codex / Codex++ 需真机调通，Codex++（桌面应用）风险最高</td></tr>
+    <tr><td>11</td><td>在 MT 管理器写文件夹，能否写到那里</td><td>测试共享存储写入成功；确认可写 /storage/emulated/0/</td></tr>
+    <tr><td>12</td><td>自己创建 /storage/emulated/0/ai-nexus；担心换电脑/换 AI 不知道进度</td><td>提出「交接文档」方案：把进度/决策/改动写成文件随代码走</td></tr>
+    <tr><td>13</td><td>开始吧</td><td>建项目目录 + docs/（复制两份需求文档）+ 建立交接文档体系</td></tr>
+    <tr><td>14</td><td>用中文名、合并成一个 HTML、放 docs/ 与另两个文档并列</td><td>删除英文 Markdown；制作单一中文 <code>AI-Nexus-交接日志.html</code></td></tr>
+    <tr><td>15</td><td>记录每次对话/决策/精确时间；余额 ≤0.5 元停手保存</td><td>新增「对话记录」「余额监控」章节；查询余额 = 5.63 元；写余额检查脚本</td></tr>
+    <tr><td>16</td><td>继续完成</td><td>完成 M1 全部 UI：工程骨架、设计 token、首页/侧边栏/输入栏/设置页/终端/引擎引导/Harness对话/Codex工作台/环境状态/6个补充配置页（25 文件 2360 行）</td></tr>
+    <tr><td>17</td><td>继续</td><td>写路由（go_router）+ 底部导航 5Tab + 侧边栏菜单接路由</td></tr>
+    <tr><td>18</td><td>继续</td><td>完成 M2 单聊核心：数据模型（ModelConfig/ChatMessage）+ 网络层（dio/SSE）+ 状态管理（ChatProvider）+ 聊天页（流式/切模型/中断重答）（30 文件 2963 行）</td></tr>
+    <tr><td>19</td><td>没有电脑，下月去网吧（休息时间用完）</td><td>说明：写代码不需电脑，下月编译即可；代码与交接日志已安全存手机</td></tr>
+    <tr><td>20</td><td>先暂停；要求：①对话完整记录②scripts 移到 docs③交接文档写清已做什么/写了哪些代码</td><td>移动 check_balance.sh 到 docs/；补全对话记录 + 新增代码文件清单章节；暂停任务</td></tr>
+  </table>
+</section>
+
+<section id="s12">
+  <h2 class="sec"><span class="num">12</span>余额监控（重要规则）</h2>
+  <div class="callout red">
+    <strong>⚠️ 停手规则（用户指定）</strong>：如果 DeepSeek API 余额 <strong>只剩 0.5 元</strong>，立即停止开发任务，保存所有进度，在本文件标记「因余额不足暂停」，并告知用户充值。
+  </div>
+  <table>
+    <tr><th>项</th><th>值</th></tr>
+    <tr><td>当前余额</td><td><strong>4.08 元</strong>（CNY，暂停时查询）</td></tr>
+    <tr><td>查询时间</td><td>2026-08-25 23:55:39</td></tr>
+    <tr><td>停手阈值</td><td>≤ 0.5 元</td></tr>
+    <tr><td>余额查询方式</td><td><code>GET https://api.deepseek.com/user/balance</code>（Bearer API Key）</td></tr>
+    <tr><td>API Key 位置</td><td><code>~/.dsh/.credentials.yaml</code>（DSH 环境变量）<br>脚本位置：<code>docs/check_balance.sh</code>（已从代码区移入 docs/）</td></tr>
+  </table>
+  <p class="muted">每次继续开发前，先按上述方式查一次余额；若 ≤ 0.5 元，则停止并保存，不再继续消耗。</p>
+</section>
+
+<!-- 13 -->
+<section id="s13">
+  <h2 class="sec"><span class="num">13</span>代码文件清单（已写了什么）</h2>
+  <p class="muted">当前共 <strong>30 个 Dart 文件约 2963 行</strong>，另含 4 个文档/配置文件。项目根目录 <code>/storage/emulated/0/ai-nexus/</code>。</p>
+
+  <h3>根目录配置（3 个）</h3>
+  <table>
+    <tr><th>文件</th><th>说明</th></tr>
+    <tr><td><code>pubspec.yaml</code></td><td>依赖：flutter_riverpod / go_router / dio / isar / flutter_markdown 等</td></tr>
+    <tr><td><code>analysis_options.yaml</code></td><td>Lint 规则（flutter_lints）</td></tr>
+    <tr><td><code>.gitignore</code></td><td>忽略构建产物</td></tr>
+  </table>
+
+  <h3>docs/ 交接文档（4 个）</h3>
+  <table>
+    <tr><th>文件</th><th>说明</th></tr>
+    <tr><td><code>AI-Nexus-开发制作文档.html</code></td><td>需求规范（原样入库）</td></tr>
+    <tr><td><code>AI-Nexus-UI设计稿.html</code></td><td>UI 高保真设计稿（原样入库）</td></tr>
+    <tr><td><code>AI-Nexus-交接日志.html</code></td><td>本交接日志（进度/决策/对话/变更/待办/风险/文件清单）</td></tr>
+    <tr><td><code>check_balance.sh</code></td><td>余额监控脚本（查询 DeepSeek 余额，≤0.5 元告警）</td></tr>
+  </table>
+
+  <h3>lib/ 代码（30 个 Dart 文件）</h3>
+  <table>
+    <tr><th>目录</th><th>文件</th><th>说明</th></tr>
+    <tr><td>入口</td><td><code>main.dart</code></td><td>App 入口（ProviderScope）</td></tr>
+    <tr><td rowspan="3">app/</td><td><code>app.dart</code></td><td>MaterialApp.router</td></tr>
+    <tr><td><code>router.dart</code></td><td>go_router 路由表（12 条路由）</td></tr>
+    <tr><td><code>theme.dart</code></td><td>设计 token（#00C896 等 + 圆角/字号/阴影）</td></tr>
+    <tr><td rowspan="2">core/models/</td><td><code>model_config.dart</code></td><td>模型配置 + 9 家供应商预设</td></tr>
+    <tr><td><code>chat_models.dart</code></td><td>ChatRole / ChatMessage / Conversation / StreamChunk</td></tr>
+    <tr><td rowspan="2">core/services/</td><td><code>api_client.dart</code></td><td>dio 封装（流式/非流式）</td></tr>
+    <tr><td><code>chat_service.dart</code></td><td>SSE 流式聊天 + 可取消</td></tr>
+    <tr><td rowspan="5">core/widgets/</td><td><code>status_bar.dart</code></td><td>状态栏</td></tr>
+    <tr><td><code>home_bar.dart</code></td><td>Home Bar</td></tr>
+    <tr><td><code>chat_bubble.dart</code></td><td>聊天气泡 + tool_call 标签</td></tr>
+    <tr><td><code>code_diff.dart</code></td><td>Code diff 块（context/add/delete）</td></tr>
+    <tr><td><code>setting_widgets.dart</code></td><td>设置通用组件（分组/行/单选/开关）</td></tr>
+    <tr><td rowspan="2">features/chat/</td><td><code>chat_page.dart</code></td><td>单聊界面（流式 + 模型切换 + 中断重答）</td></tr>
+    <tr><td><code>providers/chat_provider.dart</code></td><td>聊天状态管理（Riverpod）</td></tr>
+    <tr><td rowspan="4">features/engine/</td><td><code>harness_setup_page.dart</code></td><td>DeepSeek Harness 未配置引导页</td></tr>
+    <tr><td><code>harness_chat_page.dart</code></td><td>Harness 已配置对话页</td></tr>
+    <tr><td><code>codex_page.dart</code></td><td>Codex 编码工作台（diff + 接受/拒绝）</td></tr>
+    <tr><td><code>env_status_page.dart</code></td><td>环境状态面板（三态）</td></tr>
+    <tr><td rowspan="3">features/home/</td><td><code>home_shell.dart</code></td><td>底部导航 5Tab</td></tr>
+    <tr><td><code>widgets/app_drawer.dart</code></td><td>侧边栏（含引擎状态点）</td></tr>
+    <tr><td><code>widgets/composer.dart</code></td><td>聊天输入栏（三态 + 加号菜单 + 发送回调）</td></tr>
+    <tr><td rowspan="7">features/settings/</td><td><code>settings_page.dart</code></td><td>设置页</td></tr>
+    <tr><td><code>models_engines_page.dart</code></td><td>模型与引擎</td></tr>
+    <tr><td><code>terminal_env_page.dart</code></td><td>终端环境</td></tr>
+    <tr><td><code>group_chat_settings_page.dart</code></td><td>群聊配置</td></tr>
+    <tr><td><code>agents_page.dart</code></td><td>智能体/专家</td></tr>
+    <tr><td><code>knowledge_page.dart</code></td><td>知识库/技能/工作流</td></tr>
+    <tr><td><code>search_multimodal_page.dart</code></td><td>搜索/多模态/语音</td></tr>
+    <tr><td>features/terminal/</td><td><code>terminal_page.dart</code></td><td>终端深色界面（含闪烁光标）</td></tr>
+  </table>
+</section>
+
+<footer>
+  AI Nexus 项目交接日志 · 生成于 2026-08-25 · 本文件随每次改动同步更新，是项目的唯一事实来源。
+</footer>
+
+</main>
+</div>
+</body>
+</html>

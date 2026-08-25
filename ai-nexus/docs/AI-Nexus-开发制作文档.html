@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Nexus 开发制作文档</title>
+<style>
+  :root {
+    --bg: #0f1117; --panel: #171a23; --panel-2: #1e2230; --border: #2a2f3e;
+    --text: #e6e9f0; --muted: #9aa3b5; --accent: #4f8cff; --accent-2: #7c5cff;
+    --green: #3ecf8e; --amber: #f5a623; --red: #f5576c; --code-bg: #0b0d13;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif; line-height:1.7; font-size:15px; }
+  .layout { display:flex; min-height:100vh; }
+  nav { width:260px; flex-shrink:0; padding:24px 16px; background:var(--panel); border-right:1px solid var(--border); position:sticky; top:0; height:100vh; overflow-y:auto; }
+  nav h2 { font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin:0 0 12px; }
+  nav a { display:block; color:var(--muted); text-decoration:none; padding:7px 10px; border-radius:8px; font-size:14px; }
+  nav a:hover { background:var(--panel-2); color:var(--text); }
+  main { flex:1; padding:40px 48px; max-width:1040px; }
+  header.hero { border-bottom:1px solid var(--border); padding-bottom:28px; margin-bottom:32px; }
+  header.hero h1 { font-size:30px; margin:0 0 8px; }
+  header.hero .sub { color:var(--muted); font-size:15px; }
+  .badges { margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; }
+  .badge { font-size:12px; padding:3px 10px; border-radius:999px; border:1px solid var(--border); color:var(--muted); background:var(--panel-2); }
+  .badge.accent { color:var(--accent); border-color:var(--accent); }
+  .badge.green { color:var(--green); border-color:var(--green); }
+  section { margin-bottom:48px; }
+  h2.sec { font-size:22px; margin:0 0 6px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+  h2.sec .num { color:var(--accent); margin-right:8px; }
+  h3 { font-size:17px; margin:28px 0 10px; color:#cdd5e6; }
+  h4 { font-size:15px; margin:20px 0 8px; color:#b9c2d4; }
+  h5 { font-size:14px; margin:16px 0 6px; color:#a9b4c9; }
+  p { color:#c6cddb; margin:8px 0; }
+  .muted { color:var(--muted); }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:14px 0; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; }
+  th,td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+  th { color:var(--muted); font-weight:600; background:var(--panel-2); white-space:nowrap; }
+  tr:last-child td { border-bottom:none; }
+  code { background:var(--code-bg); padding:2px 6px; border-radius:6px; font-size:13px; color:#8fd0ff; font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace; }
+  a { color:var(--accent); }
+  .repo { display:inline-flex; align-items:center; gap:6px; background:var(--panel-2); border:1px solid var(--border); padding:4px 12px; border-radius:8px; font-size:13px; margin:4px 4px 0 0; }
+  .tag { display:inline-block; font-size:11px; padding:1px 8px; border-radius:5px; margin-right:6px; font-weight:600; }
+  .tag.done { background:rgba(62,207,142,.15); color:var(--green); }
+  .tag.todo { background:rgba(245,166,35,.15); color:var(--amber); }
+  .tag.new { background:rgba(79,140,255,.18); color:var(--accent); }
+  .tag.fix { background:rgba(245,87,108,.15); color:var(--red); }
+  ul { padding-left:20px; } li { margin:5px 0; color:#c6cddb; }
+  ol { padding-left:22px; } ol li { margin:6px 0; color:#c6cddb; }
+  .pill { display:inline-block; background:var(--panel-2); border:1px solid var(--border); padding:6px 12px; border-radius:8px; margin:4px 4px 0 0; font-size:13px; }
+  .callout { border-left:3px solid var(--accent); background:rgba(79,140,255,.07); padding:12px 16px; border-radius:0 8px 8px 0; margin:14px 0; }
+  .callout.amber { border-color:var(--amber); background:rgba(245,166,35,.07); }
+  .callout.green { border-color:var(--green); background:rgba(62,207,142,.07); }
+  .callout.red { border-color:var(--red); background:rgba(245,87,108,.07); }
+  .page-spec { background:var(--panel-2); border:1px solid var(--border); border-radius:10px; padding:14px 18px; margin:10px 0; }
+  .page-spec h5 { margin:0 0 8px; color:var(--accent); }
+  .page-spec p { margin:4px 0; font-size:13px; }
+  .props { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:13px; margin:6px 0; }
+  .props span { color:var(--muted); }
+  .props b { color:var(--text); }
+  footer { color:var(--muted); font-size:13px; border-top:1px solid var(--border); padding-top:20px; margin-top:20px; }
+  @media (max-width:820px){ .layout{flex-direction:column;} nav{width:100%;height:auto;position:static;border-right:none;border-bottom:1px solid var(--border);} main{padding:24px 18px;} }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav>
+  <h2>目录</h2>
+  <a href="#s1">1. 项目定位</a>
+  <a href="#s2">2. 参考项目总览</a>
+  <a href="#s3">3. 需求汇总（含原始UI提示词）</a>
+  <a href="#s4">4. UI 界面设计（完整规范+全部页面）</a>
+  <a href="#s4-a">4.1 设计规范</a>
+  <a href="#s4-b">4.2 原始UI设计提示词</a>
+  <a href="#s4-c">4.3-4.17 页面清单</a>
+  <a href="#s4-r">4.18-4.19 交互流程</a>
+  <a href="#s5">5. 单聊模块设计</a>
+  <a href="#s6">6. 群聊模块设计</a>
+  <a href="#s7">7. 终端模块设计</a>
+  <a href="#s8">8. 引擎层</a>
+  <a href="#s9">9. 能力层（含补齐遗漏）</a>
+  <a href="#s10">10. 实施路线</a>
+  <a href="#s11">11. 待确认事项</a>
+  <a href="#s-appendix">附录</a>
+</nav>
+
+<main>
+
+<header class="hero">
+  <h1>AI Nexus 开发制作文档</h1>
+  <div class="sub">单聊 + 群聊（多智能体）+ 终端 + 四引擎 · 即将进入开发阶段</div>
+  <div class="badges">
+    <span class="badge accent">Flutter / Android</span>
+    <span class="badge green">开发准备阶段</span>
+    <span class="badge">更新：2026-08-25</span>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<section id="s1">
+  <h2 class="sec"><span class="num">1</span>项目定位</h2>
+  <p>以 <strong>Operit AI</strong>（系统自动化 + 完整 Linux 终端）、<strong>RikkaHub</strong>（多模型聊天体验）、<strong>拾忆 ShiYi</strong>（记忆 / 项目 / 技能 / 子代理）三者之长，合成一个 Android 应用：</p>
+  <ul>
+    <li><strong>打开即聊天</strong>：启动直达单聊界面，像 RikkaHub 一样随手切模型。</li>
+    <li><strong>多智能体群聊</strong>：一个会话里混入「模型 / 智能体 / 专家」，最多 10 个，支持并行与讨论两种模式。</li>
+    <li><strong>Operit 同款终端</strong>：内置完整 Linux（proot Ubuntu 24.04），开箱即用。</li>
+    <li><strong>四引擎</strong>：<code>本地/云端模型</code> + <code>DeepSeek Harness</code> + <code>Codex（OpenAI）</code> + <code>Codex++（CodexPlusPlus）</code>，并列可选。</li>
+    <li><strong>环境状态检测</strong>：终端配置后自动检测 Python/Node/Shell/DeepSeek Harness/Codex 状态（运行中/未配置/配置失败）。</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="s2">
+  <h2 class="sec"><span class="num">2</span>参考项目总览</h2>
+  <table>
+    <tr><th>项目</th><th>定位</th><th>仓库地址</th><th>语言</th><th>许可</th></tr>
+    <tr><td><strong>Operit AI</strong></td><td>全能型 AI Agent / 系统自动化</td><td><a href="https://github.com/AAswordman/Operit">github.com/AAswordman/Operit</a></td><td>Kotlin</td><td>GPLv3（修改版）</td></tr>
+    <tr><td><strong>RikkaHub</strong></td><td>多模型聊天客户端</td><td><a href="https://github.com/rikkahub/rikkahub">github.com/rikkahub/rikkahub</a></td><td>Kotlin</td><td>AGPL-3.0</td></tr>
+    <tr><td><strong>拾忆 ShiYi</strong></td><td>个人 AI 工作台</td><td><a href="https://github.com/JIUSIS/shiyi-agent">github.com/JIUSIS/shiyi-agent</a></td><td>Flutter / Dart</td><td>GPL-3.0</td></tr>
+    <tr><td><strong>DeepSeek Harness</strong></td><td>DeepSeek 官方 agent harness</td><td><a href="https://github.com/deepseek-ai/deepseek-harness">github.com/deepseek-ai/deepseek-harness</a></td><td>TypeScript</td><td>MIT</td></tr>
+    <tr><td><strong>Codex</strong></td><td>OpenAI 官方 CLI 编码智能体</td><td><a href="https://github.com/openai/codex">github.com/openai/codex</a></td><td>Rust</td><td>Apache-2.0</td></tr>
+    <tr><td><strong>Codex++ (CodexPlusPlus)</strong></td><td>Codex 桌面应用增强启动器</td><td><a href="https://github.com/BigPizzaV3/CodexPlusPlus">github.com/BigPizzaV3/CodexPlusPlus</a></td><td>Rust / Tauri</td><td>—</td></tr>
+  </table>
+  <p class="muted">详细功能/配置见 <a href="#s-appendix">附录</a>。</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="s3">
+  <h2 class="sec"><span class="num">3</span>需求汇总</h2>
+
+  <div class="card">
+    <h4 style="margin-top:0">核心诉求（按优先级）</h4>
+    <ul>
+      <li><span class="tag done">P0</span>打开 App 直接进聊天界面，功能对齐 Operit / RikkaHub。</li>
+      <li><span class="tag done">P0</span>聊天里能自由切换模型，<strong>模型输出进行中也能切</strong>（立即中断 + 用新模型重答）。</li>
+      <li><span class="tag done">P0</span>群聊：可自定义添加「模型 / 智能体 / 专家」，<strong>上限 10 个</strong>。</li>
+      <li><span class="tag done">P0</span>群聊支持「并行 / 讨论式」两种回复模式，可切换。</li>
+      <li><span class="tag done">P0</span>终端要跟 Operit 一样（内置 proot Ubuntu 24.04），且<strong>可在终端内配置环境</strong>。</li>
+      <li><span class="tag new">P1</span>引擎层：<strong>DeepSeek Harness + Codex + Codex++</strong> 三套运行时。</li>
+      <li><span class="tag new">P1</span>合并三个项目的其余功能（记忆 / 搜索 / 技能 / 工作流 / 知识库 / 多模态 / 语音等）。</li>
+      <li><span class="tag new">P1</span>侧边栏新增 <strong>DeepSeek Harness</strong> 与 <strong>Codex</strong> 入口，未配置引导 → 终端配置 → 点亮即用。</li>
+      <li><span class="tag new">P1</span><strong>环境状态检测</strong>：Python/Node/Shell/DeepSeek Harness/Codex 三态显示（运行中/未配置/配置失败）。</li>
+      <li><span class="tag fix">P1</span><strong>补齐遗漏功能（本次做）</strong>：权限模式（无障碍/ADB/Root）、自动重试、思考开关+强度、活人感配置。</li>
+      <li><span class="tag todo">P2</span><strong>后续迭代（本次不做）</strong>：Operit 40+工具分类/Tasker集成/网页开发、RikkaHub ASR/Prompt模板/二维码/HTTP请求头/开发者模式、拾忆跨会话查阅/项目目录/压缩缓存/SOCKS5。</li>
+    </ul>
+  </div>
+  <div class="callout green">
+    <strong>「专家」的定义（已确认）</strong>：专家 = 智能体（跟智能体完全一样，复用 Agent 库，不另建类型）。因此群成员底层只有两类：<code>模型</code> 与 <code>智能体</code>。
+  </div>
+  <div class="callout green">
+    <strong>「Codex++」澄清（已确认）</strong>：不是 C++，是 <strong>Codex</strong> 与 <strong>Codex++（CodexPlusPlus）</strong> 两个东西。Codex 是 OpenAI 官方编码智能体；Codex++ 是它的增强启动器/管理工具。
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s4">
+  <h2 class="sec"><span class="num">4</span>UI 界面设计（完整规范 + 全部页面细节）</h2>
+  <p>高保真设计稿参照 <code>AI-Nexus-UI.html</code>，本节为开发实现所需的完整文字规范。</p>
+
+  <!-- 4.1 -->
+  <h3 id="s4-a">4.1 设计规范（Design Tokens）</h3>
+  <table>
+    <tr><th>类别</th><th>规范</th></tr>
+    <tr><td>设计尺寸</td><td>375 × 812（竖屏）</td></tr>
+    <tr><td>主色</td><td>#00C896（青绿，用于发送按钮 / 选中态 / 引擎状态点 / 强调）</td></tr>
+    <tr><td>背景 / 卡片</td><td>纯白 #FFFFFF / 分组卡片 #F7F7F7 / 隔断 #F0F0F2</td></tr>
+    <tr><td>文字</td><td>主文字 #1A1A1A · 次文字 #8E8E93 · 占位 #C7C7CC</td></tr>
+    <tr><td>圆角</td><td>输入框 / 卡片 16px · 按钮 12px · 弹出面板顶部 20px</td></tr>
+    <tr><td>字体</td><td>标题 17px 加粗 · 正文 15px · 小字 13px · PingFang SC / Inter 无衬线</td></tr>
+    <tr><td>阴影</td><td>卡片阴影 0 2px 8px rgba(0,0,0,.06)</td></tr>
+    <tr><td>图标</td><td>线性图标 · 2px 描边 · 深灰 #1A1A1A</td></tr>
+    <tr><td>主页外框</td><td>手机外壳圆角 46px，外阴影 0 14px 40px rgba(0,0,0,.16)</td></tr>
+    <tr><td>状态栏</td><td>高度 48px，时间 9:41，信号/电量/电池图标</td></tr>
+    <tr><td>Home Bar</td><td>高度 32px，底部横条 134×5px，圆角 3px，半透明黑</td></tr>
+  </table>
+  <p class="muted">整体极简白、扁平无渐变，头像/按钮避免未定义颜色。</p>
+
+  <!-- 4.2 -->
+  <h3 id="s4-b">4.2 原始 UI 设计需求（用户首次提供的提示词）</h3>
+  <div class="card">
+    <p><strong>用户原话：</strong></p>
+    <p style="background:var(--code-bg);padding:10px 14px;border-radius:8px;font-size:14px;color:#c6cddb;">「整体风格参考我提供的截图，但严格按照下面的修改要求执行。」</p>
+    <p><strong>用户提供的详细规范：</strong></p>
+    <ul>
+      <li>设计尺寸 375×812，竖屏手机</li>
+      <li>颜色：纯白 #FFFFFF / 卡片底色 #F7F7F7 / 主色青绿 #00C896 / 主文字 #1A1A1A / 次文字 #8E8E93 / 占位 #C7C7CC</li>
+      <li>圆角：输入框/卡片 16px · 按钮 12px · 弹出面板顶部 20px</li>
+      <li>字体：无衬线（PingFang SC / Inter），标题 17px 粗体 · 正文 15px · 小字 13px</li>
+      <li>阴影：0 2px 8px rgba(0,0,0,.06)</li>
+      <li>图标：线性图标，2px 描边，深灰色</li>
+      <li>页面：首页（汉堡键 + 输入栏 + "内容由 AI 生成"）</li>
+      <li>侧边栏：专家/项目/任务区，齿轮移至头像右侧</li>
+      <li>聊天输入栏：语音 · 模型切换 · 加号 · 发送（空=灰 / 有内容=青绿 双状态）</li>
+      <li>加号弹出菜单：拍照 · 照片视频 · 手机文件 · 专家中心</li>
+      <li>设置页：记忆库 · 主题（系统/浅色/深色）· 语言 · 字体大小 · 帮助 · 消息通知 · 分享日志 · 清除日志 · 意见反馈</li>
+    </ul>
+    <p><strong>后续补充需求：</strong></p>
+    <ul>
+      <li>终端必须是深色代码风格界面（黑底 + 命令输出 + 光标闪烁）</li>
+      <li>侧边栏新增 DeepSeek Harness 和 Codex 入口，带状态点（灰=未配置 / 青=已就绪）</li>
+      <li>引擎接入流程：点入口 → 未配置则引导去终端 → 终端启动服务 → 返回后状态点亮 → 再点即直接使用</li>
+      <li>环境状态检测：Python/Node/Shell/DeepSeek Harness/Codex，三态指示（运行中/未配置/配置失败）</li>
+      <li>终端只保留 Ubuntu 24.04，不做多发行版切换</li>
+    </ul>
+  </div>
+
+  <!-- 4.3–4.17 页面清单 -->
+  <h3 id="s4-c">4.3–4.17 完整页面清单</h3>
+
+  <div class="page-spec">
+    <h5>4.3 页面一：首页</h5>
+    <div class="props">
+      <span>布局：<b>状态栏 + 汉堡键 + 空白区域 + "内容由 AI 生成" + 底部输入栏</b></span>
+    </div>
+    <p>状态栏顶部显示时间 9:41 和信号/电量图标。汉堡键 44×44px，圆角 50%，背景 #F7F7F7，带阴影。中间区域留白（home-empty）。底部固定文字 "内容由 AI 生成" 12px #C7C7CC。输入栏见 4.9。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.4 页面二：侧边栏</h5>
+    <div class="props">
+      <span>宽度：<b>281px</b> · 圆角：<b>右 46px</b> · 阴影：<b>8px 右</b></span>
+    </div>
+    <p>顶部：头像（52px 青绿底 + 白色首字） + 齿轮图标在右侧。菜单列表（14px gap）：专家 / 项目 / 终端 / DeepSeek Harness（带状态点）/ Codex（带状态点）/ 群聊。分隔线 #EFEFF1。任务区：标题"任务" + "完成编辑"按钮 + "新建任务"卡片（#F7F7F7 圆角 14px）+ "暂无云端任务"占位。</p>
+    <p>状态点：8px 圆点，灰 #C7C7CC = 未配置，青 #00C896 = 已就绪。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.5 终端：主界面（深色代码风格）</h5>
+    <div class="props">
+      <span>背景：<b>#0C0C0E</b> · 顶栏：<b>#151517</b> · 字体：<b>SF Mono / Menlo / Consolas 12.5px</b></span>
+    </div>
+    <p>顶栏左："Ubuntu 24.04" + 青绿状态点，右：齿轮图标。命令输出：<code>pwd</code> → <code>/home/user</code>，<code>ls -la</code> → 文件列表，<code>python3 --version</code> → <code>Python 3.12.3</code>，<code>npx @deepseek-ai/dsh web</code> → <code>DeepSeek Harness server ready → http://127.0.0.1:3080</code>。环境检测输出：✓ Python / ✓ Node / ✓ Shell / ✓ Harness / ✗ Codex。底部光标闪烁。Home Bar 半透明白。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.6 DeepSeek Harness · 未配置引导页</h5>
+    <div class="props">
+      <span>导航：<b>返回按钮 + 标题 "DeepSeek Harness"</b></span>
+    </div>
+    <p>居中布局：72px 圆角 20px 图标（闪电）→ "DeepSeek Harness 环境未就绪"（18px 粗体）→ 描述文字（14px #8E8E93）→ 三步引导卡片（#F7F7F7 圆角 14px）：① 打开侧边栏「终端」② 执行 <code>npx @deepseek-ai/dsh web</code> ③ 返回后点「检查并开始」。按钮：主按钮「去终端配置」（青绿底白色字），次按钮「检查并开始」（灰底 + 边框）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.7 DeepSeek Harness · 已配置对话页</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "DeepSeek Harness"</b></span>
+    </div>
+    <p>聊天气泡：用户（青绿底白字，右下角圆角 6px），AI（灰底黑字，左下角圆角 6px），tool_call 标签（小字，显示"调用工具：web_search"）。底部输入栏复用 4.9 样式，不显示模型切换。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.8 Codex · 已配置编码工作台</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "Codex"</b></span>
+    </div>
+    <p>聊天气泡 + 代码 diff 块（#F7F7F7 圆角 12px）。diff 行：上下文（灰色）/+ 新增行（青绿底 10% 透明度）/- 删除行（红底 10% 透明度）。底部操作栏：「接受变更」（青绿满底白字）和「拒绝」（灰底 + 边框）。输入栏提示"描述代码任务..."。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.9 页面三：聊天输入栏（三种状态）</h5>
+    <div class="props">
+      <span>容器：<b>圆角 999px</b> · 边框 <b>1px #ECECEC</b> · 内边距 <b>6px 8px</b></span>
+    </div>
+    <p><strong>空状态</strong>：语音按钮 + 模型芯片（"Auto" + 下箭头） + 输入框 placeholder "发消息或按住说话" + 加号按钮 + 发送按钮（灰色不可用）。<strong>已输入</strong>：输入框有值"帮我写一段代码"，发送按钮变青绿满底白字。<strong>加号弹出菜单</strong>：半透明遮罩渐显，底部面板（圆角顶部 20px），抓取条 36×4px，大按钮三列（拍照/照片视频/手机文件），列表行（技能 Skill + 专家中心，带 Chevron 箭头）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.10 页面四：设置页</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "设置"</b></span>
+    </div>
+    <p>分组列表（#F7F7F7 圆角 16px，带阴影）：<br>组1：记忆库（带箭头）<br>组2：主题（分段控件：系统/浅色/深色，圆角 999px）+ 语言（跟随系统）+ 字体大小<br>组3：使用帮助<br>组4：消息通知设置（已开启）<br>组5：分享日志（按时间范围导出）+ 清除日志 + 意见反馈</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.11 补充配置：模型与引擎</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "模型与引擎"</b></span>
+    </div>
+    <p>单选列表：四个引擎选项（本地/云端模型 / DeepSeek Harness / Codex / Codex++），选中态青绿圆点 + 勾。配置区：供应商（DeepSeek）/ API Key（已配置）/ Base URL（api.deepseek.com/v1）/ 模型名（deepseek-chat）/ 测试连接。DeepSeek Harness 服务地址（127.0.0.1:3080），Codex 启动命令（codex）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.12 补充配置：终端环境</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "终端环境"</b></span>
+    </div>
+    <p><span class="tag fix">修正</span>只保留 Ubuntu 24.04（内置 proot），无多发行版选项。配置区：Python 版本（3.12）/ Node 版本（20）/ 默认 Shell（bash）。操作区：导入自定义 rootfs / 挂载文件系统 / SSH 服务（开关）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.13 环境状态面板（运行中/未配置/配置失败）</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "环境状态"</b></span>
+    </div>
+    <p>卡片列表（#F7F7F7 圆角 14px），每项含：彩色图标（36px 圆角 10px）+ 名称 + 版本号 + 状态点 + 状态文字。三态：青点 +「运行中」/ 灰点 +「未配置」+「去配置」按钮 / 红点 +「配置失败」。示例：Python 3.12.3 ✓运行中 / Node 20.11.0 ✓运行中 / Shell bash 5.2 ✓运行中 / DeepSeek Harness 127.0.0.1:3080 ✓运行中 / Codex ✗未配置 / Ruby ✗配置失败。图标颜色：Python 蓝黄渐变 / Node 绿 / Shell 绿 / Hardness 青绿渐变 / Codex 黑。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.14 补充配置：群聊</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "群聊"</b></span>
+    </div>
+    <p>单选模式：并行（成员同时回复）/ 讨论式（按顺序轮流发言）。成员上限 10（带数值显示）。模型库和智能体库两个入口（带箭头）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.15 补充配置：智能体 / 专家</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "智能体 / 专家"</b></span>
+    </div>
+    <p>列表：代码专家（已启用）/ 写作助手（已启用）+ 新建智能体（+ 添加）。角色卡导入（Silly Tavern 兼容）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.16 补充配置：知识库 / 技能 / 工作流</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "知识库 / 技能 / 工作流"</b></span>
+    </div>
+    <p>知识库（3 条）/ 技能 Skills（快速选 /）+ 导入/导出 / 工作流 Workflow（2 条）。</p>
+  </div>
+
+  <div class="page-spec">
+    <h5>4.17 补充配置：搜索 / 多模态 / 语音</h5>
+    <div class="props">
+      <span>导航：<b>返回 + 标题 "搜索 / 多模态 / 语音"</b></span>
+    </div>
+    <p>联网搜索（开关）+ 搜索引擎（Tavily 带箭头）。图片识别（开关开）/ PDF 解析（开关开）。语音朗读 TTS（开关关）/ 语音输入 ASR（开关关）。</p>
+  </div>
+
+  <!-- 4.18–4.19 交互流程 -->
+  <h3 id="s4-r">4.18 交互流程：引擎入口（未配置 → 终端配置 → 点亮即用）</h3>
+  <div class="callout green">用户确认：<strong>点入口 → 未配置先引导去终端 → 终端启动本地服务 → 回侧边栏状态点变青 → 再点即直接使用。</strong></div>
+  <ol>
+    <li><strong>侧边栏</strong>：DeepSeek Harness 和 Codex 各有一个状态点（灰/青）。</li>
+    <li><strong>点击灰点入口</strong> → 跳转到「未配置引导页」（4.6），显示三步说明。</li>
+    <li><strong>「去终端配置」按钮</strong> → 跳转到终端界面（4.5），自动填入/提示启动命令。</li>
+    <li><strong>执行命令成功</strong> → 终端显示服务就绪信息，环境检测输出各状态。</li>
+    <li><strong>返回侧边栏</strong> → 状态点自动变青（本地服务探活成功）。</li>
+    <li><strong>再次点击青点入口</strong> → 直接进入对话/编码工作台（4.7/4.8）。</li>
+  </ol>
+
+  <h3>4.19 交互流程：环境状态检测</h3>
+  <ol>
+    <li>终端启动时 / 用户触发「检查并开始」时，系统对每个环境执行探活命令。</li>
+    <li>检测范围：Python（<code>python3 --version</code>）、Node（<code>node --version</code>）、Shell（<code>bash --version</code>）、DeepSeek Harness（端口 3080 探活）、Codex（<code>codex --version</code>）。</li>
+    <li>结果映射：成功 → 运行中（青点），未安装 → 未配置（灰点），异常 → 配置失败（红点）。</li>
+    <li>状态展示于「环境状态面板」（4.13）和侧边栏状态点。</li>
+    <li>配置完成后自动重新检测并更新状态。</li>
+  </ol>
+</section>
+
+<!-- ============================================================ -->
+<section id="s5">
+  <h2 class="sec"><span class="num">5</span>单聊模块设计</h2>
+
+  <h3>5.1 打开即聊天</h3>
+  <ul>
+    <li>App 启动默认直达聊天界面，底部导航 5 Tab（聊天 / 群聊 / 终端 / 项目 / 设置），默认选中「聊天」。</li>
+    <li>无 API Key 时聊天页显示引导，不是白屏。</li>
+  </ul>
+
+  <h3>5.2 模型自由切换</h3>
+  <ul>
+    <li>聊天顶部固定模型选择器（如 "Auto" 芯片 + 下拉箭头）。</li>
+    <li>切换即时生效，下一条用新模型；支持已配置的所有供应商。</li>
+  </ul>
+
+  <h3>5.3 流式输出中切换（关键新能力）</h3>
+  <div class="callout">用户确认：<strong>「立即中断，用新模型重答」</strong></div>
+  <ol>
+    <li>切换模型 → 中止当前 HTTP 流（取消订阅 + 关闭连接）。</li>
+    <li>当前正在生成的助手消息立即停止，标记为中断。</li>
+    <li>用新模型重新生成这一条（用户消息不变，只重跑回答）。</li>
+  </ol>
+
+  <h3>5.4 功能对齐清单</h3>
+  <table>
+    <tr><th>功能</th><th>现状</th><th>规划</th></tr>
+    <tr><td>流式输出 + Markdown</td><td><span class="tag done">已有</span></td><td>保持</td></tr>
+    <tr><td>多供应商 / 多模型</td><td><span class="tag done">已有</span></td><td>保持</td></tr>
+    <tr><td>顶部模型切换</td><td><span class="tag done">已有</span></td><td>保持</td></tr>
+    <tr><td>流式中切模型</td><td><span class="tag new">新增</span></td><td>5.3</td></tr>
+    <tr><td>会话历史持久化</td><td><span class="tag done">已有</span></td><td>保持</td></tr>
+    <tr><td>记忆（ChatGPT 式）</td><td><span class="tag todo">待做</span></td><td>自动摘要 / 关键信息沉淀</td></tr>
+    <tr><td>联网搜索</td><td><span class="tag todo">待做</span></td><td>对齐 RikkaHub 多引擎</td></tr>
+    <tr><td>多模态（图片 / PDF）</td><td><span class="tag todo">附件有，识别未接</span></td><td>图片视觉识别</td></tr>
+    <tr><td>消息分支</td><td><span class="tag todo">待做</span></td><td>从任意消息分叉</td></tr>
+    <tr><td>AI 翻译</td><td><span class="tag todo">待做</span></td><td>长按消息翻译</td></tr>
+    <tr><td>语音朗读 (TTS) / 语音输入</td><td><span class="tag todo">待做</span></td><td>朗读回复 + 语音输入</td></tr>
+    <tr><td>角色卡导入</td><td><span class="tag todo">低优先</span></td><td>兼容 Silly Tavern</td></tr>
+    <tr><td>Markdown 高级渲染</td><td><span class="tag fix">补齐</span></td><td>LaTeX 公式 / Mermaid 图表</td></tr>
+    <tr><td>Prompt 模板</td><td><span class="tag fix">补齐</span></td><td>可保存/切换 Prompt 模板</td></tr>
+    <tr><td>二维码导入导出</td><td><span class="tag fix">补齐</span></td><td>设置/配置二维码</td></tr>
+    <tr><td>自动重试</td><td><span class="tag fix">补齐</span></td><td>API 失败时自动重试</td></tr>
+    <tr><td>压缩 + 缓存命中</td><td><span class="tag fix">补齐</span></td><td>对话压缩/缓存状态显示</td></tr>
+    <tr><td>思考开关 + 强度</td><td><span class="tag fix">补齐</span></td><td>思考过程显示/隐藏/强度调节</td></tr>
+    <tr><td>活人感配置</td><td><span class="tag fix">补齐</span></td><td>语气词/停顿/口癖</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<section id="s6">
+  <h2 class="sec"><span class="num">6</span>群聊模块设计</h2>
+
+  <h3>6.1 成员统一模型</h3>
+  <table>
+    <tr><th>字段</th><th>说明</th></tr>
+    <tr><td><code>type</code></td><td><code>model</code>（裸模型） / <code>agent</code>（智能体·含专家）</td></tr>
+    <tr><td><code>显示名</code></td><td>显示在群聊里的名字</td></tr>
+    <tr><td><code>model 型</code></td><td>直接挂一个 <code>ModelConfig</code>，无角色设定</td></tr>
+    <tr><td><code>agent 型</code></td><td>引用 <code>Agent</code>，带入身份 / 系统提示词 / 模型 / 技能</td></tr>
+  </table>
+  <ul>
+    <li><strong>模型成员</strong>：回复用默认身份，无系统提示词。</li>
+    <li><strong>智能体 / 专家成员</strong>：从 Agent 库选（同一池子）。</li>
+    <li>新建群聊弹窗分两栏：模型库 / 智能体库，可混选。</li>
+  </ul>
+
+  <h3>6.2 上限 10</h3>
+  <ul>
+    <li>创建 + 编辑时硬校验，超过 10 禁止加入并提示。</li>
+    <li>群详情顶部显示「N / 10」。</li>
+  </ul>
+
+  <h3>6.3 两种回复模式</h3>
+  <div class="callout">用户确认：<strong>并行 / 讨论式 两种都做，建群可选、之后可改。</strong></div>
+  <table>
+    <tr><th>模式</th><th>行为</th><th>特点</th></tr>
+    <tr><td><strong>并行</strong></td><td>每个成员各自基于「用户消息 + 历史 + 自己身份」同时回复</td><td>快；成员间互不知晓</td></tr>
+    <tr><td><strong>讨论式</strong></td><td>按加入顺序轮流发言，后一个能看到前一个的回复再回答</td><td>像圆桌；可自定义调整顺序（拖拽/排序按钮）</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<section id="s7">
+  <h2 class="sec"><span class="num">7</span>终端模块设计</h2>
+  <div class="callout green">用户确认：<strong>终端和 Operit AI 一模一样，只保留 Ubuntu 24.04。</strong></div>
+
+  <h3>7.1 目标</h3>
+  <p>与 Operit AI 完全一致的终端体验：内置完整 Linux（proot Ubuntu 24.04），开箱即用（不依赖用户装 Termux）。深色代码风格界面。</p>
+  <table>
+    <tr><th>Operit 终端特性</th><th>现状</th><th>规划</th></tr>
+    <tr><td>内置完整 Linux</td><td><span class="tag todo">骨架</span></td><td>proot 内置 rootfs 为默认</td></tr>
+    <tr><td>bash / apt / python</td><td><span class="tag todo">骨架</span></td><td>补齐 rootfs + 常用包</td></tr>
+    <tr><td>命令历史、彩色输出</td><td><span class="tag todo">未做</span></td><td>新增</td></tr>
+    <tr><td>SSH</td><td><span class="tag todo">未做</span></td><td>规划</td></tr>
+    <tr><td>挂载手机文件系统</td><td><span class="tag todo">未做</span></td><td>规划</td></tr>
+    <tr><td>AI 复用同一终端 (run_terminal)</td><td><span class="tag todo">未做</span></td><td>让 Agent 也能跑命令</td></tr>
+    <tr><td>Termux 回退</td><td><span class="tag done">骨架</span></td><td>保留备选</td></tr>
+    <tr><td>权限模式</td><td><span class="tag fix">补齐</span></td><td>无障碍 / ADB / Root 三选</td></tr>
+  </table>
+
+  <h3>7.2 环境配置（Python / Node 等，在终端内完成）</h3>
+  <ul>
+    <li>所有运行时环境通过终端命令配置，不在 UI 中做配置生成。</li>
+    <li>Python 版本：通过 pyenv 或 apt 安装。</li>
+    <li>Node 版本：通过 nvm 安装管理。</li>
+    <li>默认 Shell：bash / zsh 在终端内切换。</li>
+    <li>导入自定义 rootfs、挂载文件系统、SSH 对齐 Operit 方案。</li>
+  </ul>
+
+  <h3>7.3 环境状态检测</h3>
+  <table>
+    <tr><th>状态</th><th>含义</th><th>颜色</th></tr>
+    <tr><td><strong>运行中</strong></td><td>环境已安装并可正常调用</td><td>青绿 #00C896</td></tr>
+    <tr><td><strong>未配置</strong></td><td>环境尚未安装，可前往终端配置</td><td>灰色 #C7C7CC</td></tr>
+    <tr><td><strong>配置失败</strong></td><td>环境已安装但检测异常</td><td>红色 #F5576C</td></tr>
+  </table>
+  <ul>
+    <li>检测方式：终端启动时 / 触发「检查并开始」时执行探活命令。</li>
+    <li>检测范围：Python、Node、Shell、DeepSeek Harness（端口 3080）、Codex。</li>
+    <li>状态展示：环境面板中每个条目右侧显示状态点 + 文字标签。</li>
+    <li>自动刷新：配置完成后自动重新检测并更新状态。</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="s8">
+  <h2 class="sec"><span class="num">8</span>引擎层</h2>
+  <p>四套运行时并行可选，会话数据各自独立。</p>
+
+  <div class="card">
+    <h4 style="margin-top:0">① 本地 / 云端模型</h4>
+    <p>DeepSeek / OpenAI / Anthropic / Gemini / Kimi / 智谱 / 通义 / OpenRouter / Ollama，流式调用。</p>
+  </div>
+  <div class="card">
+    <h4>② DeepSeek Harness</h4>
+    <p>通过 <code>npx @deepseek-ai/dsh web</code>（默认 127.0.0.1:3080）接入，底层 Cordis 框架。</p>
+  </div>
+  <div class="card">
+    <h4>③ Codex（OpenAI Codex CLI）</h4>
+    <p>OpenAI 官方命令行编码智能体，用于代码生成、重构、调试、执行。</p>
+  </div>
+  <div class="card">
+    <h4>④ Codex++（CodexPlusPlus）</h4>
+    <p>外部启动器 + 管理工具，通过 Chromium DevTools Protocol 实现供应商切换、协议转换、会话管理。</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="s9">
+  <h2 class="sec"><span class="num">9</span>能力层（含补齐遗漏功能）</h2>
+  <p>已有 + 补齐后的完整能力清单：</p>
+
+  <h4>现有能力（已实现）</h4>
+  <span class="pill">Agent</span>
+  <span class="pill">知识库</span>
+  <span class="pill">技能 (Skills)</span>
+  <span class="pill">工作流 (Workflow)</span>
+  <span class="pill">文件</span>
+  <span class="pill">生成器 (Generator)</span>
+  <span class="pill">项目管理</span>
+  <span class="pill">工作区 (Workspace)</span>
+  <span class="pill">长期记忆</span>
+  <span class="pill">联网搜索</span>
+  <span class="pill">多模态</span>
+  <span class="pill">语音 / TTS</span>
+
+  <h4 style="margin-top:20px">补齐遗漏 — 本次做（P1）</h4>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">权限模式（无障碍/ADB/Root）</span>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">自动重试</span>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">思考开关+强度</span>
+  <span class="pill" style="border-color:var(--green);color:var(--green);">活人感配置</span>
+
+  <h4 style="margin-top:20px">后续迭代（P2/P3，本次不做）</h4>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Operit 40+ 工具分类</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Tasker 集成</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">网页开发/游戏代码生成</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Markdown 高级渲染（LaTeX/Mermaid）</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">ASR 语音识别</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">Prompt 模板</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">二维码导入导出</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">HTTP 请求头/体配置</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">开发者模式</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">跨会话查阅</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">项目级工作目录</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">压缩/缓存命中</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">SOCKS5 代理</span>
+  <span class="pill" style="border-color:var(--amber);color:var(--amber);">任务通知</span>
+</section>
+
+<!-- ============================================================ -->
+<section id="s10">
+  <h2 class="sec"><span class="num">10</span>实施路线与优先级</h2>
+  <table>
+    <tr><th>优先级</th><th>模块</th><th>说明</th></tr>
+    <tr><td><span class="tag done">P0</span></td><td>单聊：首页直达 + 流式中切模型</td><td>体感最强，先做</td></tr>
+    <tr><td><span class="tag done">P0</span></td><td>群聊：成员统一（模型/智能体）+ 上限 10</td><td>数据模型改动，先于交互模式</td></tr>
+    <tr><td><span class="tag new">P1</span></td><td>群聊：并行 vs 讨论式</td><td>依赖 P0 成员模型</td></tr>
+    <tr><td><span class="tag new">P1</span></td><td>终端：内置 proot + 环境配置 + 环境状态检测</td><td>对齐 Operit，三态显示</td></tr>
+    <tr><td><span class="tag new">P1</span></td><td>UI：高保真界面 + 侧边栏引擎入口（未配置→终端→点亮）</td><td>按第 4 章落地</td></tr>
+    <tr><td><span class="tag new">P1</span></td><td>引擎：DeepSeek Harness + Codex + Codex++ 接入验证</td><td>真机调通</td></tr>
+    <tr><td><span class="tag fix">P1</span></td><td>补齐遗漏：权限模式 + 自动重试 + 思考开关+强度 + 活人感配置</td><td>低风险体感优化，按第 9 章做</td></tr>
+    <tr><td><span class="tag todo">P2</span></td><td>后续迭代：Operit 工具分类/Tasker/网页开发、RikkaHub ASR/Prompt模板/二维码等</td><td>本次不做，等首次发布后再迭代</td></tr>
+    <tr><td><span class="tag todo">P2</span></td><td>单聊：记忆 / 搜索 / 多模态 / 分支 / 翻译 / 语音</td><td>功能对齐，逐个来</td></tr>
+    <tr><td><span class="tag todo">P3</span></td><td>Assistant 工具调用打通（run_terminal 等）</td><td>把终端接入 Agent</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<section id="s11">
+  <h2 class="sec"><span class="num">11</span>待确认事项</h2>
+  <table>
+    <tr><th>编号</th><th>事项</th><th>状态</th></tr>
+    <tr><td>T-1</td><td>首页直达方式</td><td><span class="tag done">已确认</span>保留底部导航，默认选中「聊天」</td></tr>
+    <tr><td>T-2</td><td>讨论式发言顺序</td><td><span class="tag done">已确认</span>按加入顺序，可自定义调整（拖拽/排序按钮）</td></tr>
+    <tr><td>T-3</td><td>流式中切模型范围</td><td><span class="tag done">已确认</span>只重答当前这一条</td></tr>
+    <tr><td>T-4</td><td>终端方案</td><td><span class="tag done">已确认</span>和 Operit 一模一样，只保留 Ubuntu 24.04</td></tr>
+    <tr><td>T-5</td><td>引擎入口「检查并开始」校验</td><td><span class="tag done">已确认</span>探测本地服务成功则点亮，失败则提示</td></tr>
+    <tr><td>T-6</td><td>环境状态检测范围</td><td>Python/Node/Shell/DeepSeek Harness 端口/Codex 端口</td></tr>
+  </table>
+</section>
+
+<!-- ============================================================ -->
+<section id="s-appendix">
+  <h2 class="sec"><span class="num">附录</span>三个参考项目详表</h2>
+
+  <h3>A.1 Operit AI</h3>
+  <span class="repo"><a href="https://github.com/AAswordman/Operit">AAswordman/Operit</a></span>
+  <h4>核心功能</h4>
+  <ul>
+    <li>模型：云端 API + 本地模型（MNN / llama.cpp，GGUF：Llama / Qwen）</li>
+    <li><strong>40+ 内置工具五大类</strong>：文件系统 / HTTP 网络 / 系统操作 / UI 自动化 / 媒体处理</li>
+    <li>深度搜索多引擎（DuckDuckGo / Tavily / 百度地图）</li>
+    <li>智能记忆库、工作流 + 自动化（<strong>Tasker 集成</strong>）</li>
+    <li>MCP / Skill / 插件市场、人设 + 角色卡</li>
+    <li>内置 Ubuntu 24 终端（SSH、挂载文件系统）、网页开发 + 游戏代码生成</li>
+    <li>语音（语音球 / TTS）、多模态</li>
+  </ul>
+  <h4>设置项</h4>
+  <ul>
+    <li><strong>权限模式</strong>：无障碍 / ADB / Root 三选</li>
+    <li>模型管理：导入 GGUF、切换 API、本地推理开关</li>
+    <li>角色 / 人设中心、主题系统（颜色 / 字体 / 间距 / 暗色）</li>
+    <li>记忆库开关、工作流 / 自动化、语音 / TTS、默认工具配置</li>
+  </ul>
+
+  <h3>A.2 RikkaHub</h3>
+  <span class="repo"><a href="https://github.com/rikkahub/rikkahub">rikkahub/rikkahub</a></span>
+  <h4>核心功能</h4>
+  <ul>
+    <li>多供应商：自定义 API / URL / 模型（OpenAI / Google / Anthropic 兼容）</li>
+    <li>多模态（图片 / PDF / Docx）、<strong>Markdown 高级渲染（代码高亮 / LaTeX / 表格 / Mermaid）</strong></li>
+    <li>Material You + 暗色、MCP 支持、Agent 自定义、ChatGPT 式记忆</li>
+    <li>搜索（Exa / Tavily / Zhipu / LinkUp / Brave / Perplexity）</li>
+    <li>消息分支、AI 翻译、Silly Tavern 角色卡导入、proot Linux 工作区、Web 多端</li>
+  </ul>
+  <h4>设置项</h4>
+  <ul>
+    <li>供应商配置（API / Key / 模型列表）、模型选择</li>
+    <li>主题（themeId / dynamicColor / 暗色）、<strong>开发者模式</strong></li>
+    <li>MCP 配置、<strong>ASR 语音识别</strong>、<strong>Prompt 模板</strong>、记忆 + 注入位置</li>
+    <li>智能体 / 头像、<strong>二维码导入导出</strong>、<strong>HTTP 请求头 / 体</strong></li>
+  </ul>
+
+  <h3>A.3 拾忆 ShiYi</h3>
+  <span class="repo"><a href="https://github.com/JIUSIS/shiyi-agent">JIUSIS/shiyi-agent</a></span>
+  <h4>核心功能</h4>
+  <ul>
+    <li>双引擎（本地引擎 / DeepSeek Harness）、多模型（OpenAI / Anthropic / Gemini / DeepSeek 预设 + 自定义）</li>
+    <li>会话管理 + <strong>跨会话查阅</strong>、<strong>项目分类 + 项目级工作目录</strong>、长期记忆</li>
+    <li>技能系统（<code>/</code> 快速选、导入导出）、网页搜索 + 内容提取</li>
+    <li>内置 Alpine 终端（bash / python3 / apk）、子代理 spawn_agent（explore / plan / worker / general）</li>
+    <li>流式 / <strong>压缩 / 缓存命中</strong>、<strong>SOCKS5</strong>、<strong>活人感</strong>、<strong>思考</strong></li>
+  </ul>
+  <h4>设置项</h4>
+  <ul>
+    <li>模型：引擎选择、Base URL / Key、模型、预设、测试连接 / 获取模型 ID</li>
+    <li>对话：输出上限、回车发送、<strong>思考开关 + 强度</strong>、压缩、<strong>活人感</strong>、<strong>自动重试</strong></li>
+    <li>通用：<strong>SOCKS5</strong>、主题、语音朗读、<strong>任务通知</strong>；支持：日志排障、关于</li>
+  </ul>
+</section>
+
+<footer>
+  AI Nexus 开发制作文档 · 生成于 2026-08-25 · 已整合全部 UI 设计 + 遗漏补齐，准备进入开发阶段。
+</footer>
+
+</main>
+</div>
+</body>
+</html>

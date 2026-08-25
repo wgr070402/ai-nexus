@@ -1,0 +1,18 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+*.iml
+.idea/
+pubspec.lock
+
+# 平台构建产物
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# IDE
+.vscode/
+*.swp
+.DS_Store
