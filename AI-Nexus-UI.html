@@ -189,6 +189,29 @@
   .switch .knob{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);}
   .switch.on .knob{left:20px;}
 
+  /* ===== 环境状态面板 ===== */
+  .env-panel{padding:16px;flex:1;display:flex;flex-direction:column;gap:12px;}
+  .env-card{border-radius:14px;background:#F7F7F7;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+  .env-card .e-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .env-card .e-icon.python{background:linear-gradient(135deg,#306998,#FFD43B);}
+  .env-card .e-icon.node{background:#339933;}
+  .env-card .e-icon.shell{background:#4EAA25;}
+  .env-card .e-icon.harness{background:linear-gradient(135deg,#00C896,#008060);}
+  .env-card .e-icon.codex{background:#1A1A1A;}
+  .env-card .e-icon svg{width:20px;height:20px;color:#fff;}
+  .env-card .e-info{flex:1;min-width:0;}
+  .env-card .e-name{font-size:15px;font-weight:600;color:#1A1A1A;}
+  .env-card .e-ver{font-size:12px;color:#8E8E93;margin-top:2px;}
+  .env-card .e-status{display:flex;align-items:center;gap:6px;flex-shrink:0;font-size:13px;font-weight:600;}
+  .env-card .e-status .s-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .env-card .e-status .s-dot.green{background:var(--teal);}
+  .env-card .e-status .s-dot.gray{background:#C7C7CC;}
+  .env-card .e-status .s-dot.red{background:#F5576C;}
+  .env-card .e-status .s-txt.green{color:var(--teal);}
+  .env-card .e-status .s-txt.gray{color:#C7C7CC;}
+  .env-card .e-status .s-txt.red{color:#F5576C;}
+  .env-card .e-status .s-action{color:#007AFF;font-size:13px;font-weight:500;cursor:pointer;}
+
   /* ===== 终端主界面（深色代码风格） ===== */
   .term-bg{background:#0C0C0E;}
   .term-bg .statusbar .time{color:#E8E8EA;}
@@ -272,6 +295,9 @@
     <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
     <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
     <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></symbol>
+    <symbol id="i-py" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a5 5 0 0 0-5 5v2a5 5 0 0 0 5 5h0a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5z"/><path d="M7 10v2a5 5 0 0 0 5 5h0a5 5 0 0 0 5-5v-2"/><path d="M12 17v5"/><path d="M8 22h8"/></symbol>
+    <symbol id="i-node" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7v10l10 5 10-5V7z"/><path d="M2 7l10 5 10-5"/><path d="M12 12v10"/></symbol>
+    <symbol id="i-ruby" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 3h4l-2 4 2 4h-4l-3 3-3-3H5l2-4-2-4h4z"/><circle cx="12" cy="12" r="2"/></symbol>
   </defs>
 </svg>
 
@@ -311,7 +337,7 @@
       <li>终端主界面（黑底代码界面 · ls / python 等命令输出）</li>
       <li>加号菜单 技能 Skill（新增）</li>
       <li>设置 模型与引擎（本地模型 / DeepSeek Harness / Codex / Codex++）</li>
-      <li>设置 终端环境（多环境 / 自定义 rootfs）</li>
+      <li>环境状态面板（运行中 / 未配置 / 配置失败 · 三态指示）</li>
       <li>设置 群聊（并行/讨论 · 上限 10）</li>
       <li>设置 智能体/专家 · 知识库/技能/工作流 · 搜索/多模态/语音</li>
     </ul>
@@ -418,6 +444,13 @@
         <div class="t-line">&nbsp;</div>
         <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span> <span class="t-cmd">npx @deepseek-ai/dsh web</span></div>
         <div class="t-line"><span class="t-out">DeepSeek Harness server ready → </span><span class="t-dir">http://127.0.0.1:3080</span></div>
+        <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-out">── 环境状态检测 ──</span></div>
+        <div class="t-line"><span class="t-out">✓ Python  3.12.3</span></div>
+        <div class="t-line"><span class="t-out">✓ Node    20.11.0</span></div>
+        <div class="t-line"><span class="t-out">✓ Shell   bash 5.2</span></div>
+        <div class="t-line"><span class="t-out">✓ Harness 127.0.0.1:3080</span></div>
+        <div class="t-line"><span class="t-out">✗ Codex   未安装</span></div>
         <div class="t-line">&nbsp;</div>
         <div class="t-line"><span class="t-user">user@nexus</span><span class="t-path">:~$</span><span class="t-cur"></span></div>
       </div>
@@ -731,6 +764,75 @@
           <div class="row"><span class="label">导入自定义 rootfs</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
           <div class="row"><span class="label">挂载文件系统</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
           <div class="row"><span class="label">SSH 服务</span><span class="switch off" style="width:46px"><span class="knob"></span></span></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 环境状态 · 运行中 / 未配置 / 配置失败 -->
+  <div class="frame">
+    <div class="frame-label">环境状态 · 运行中 / 未配置 / 配置失败<span class="tag">新增</span></div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">环境状态</div>
+      </div>
+      <div class="env-panel">
+        <div class="env-card">
+          <div class="e-icon python"><svg viewBox="0 0 24 24"><use href="#i-py"/></svg></div>
+          <div class="e-info">
+            <div class="e-name">Python</div>
+            <div class="e-ver">3.12.3</div>
+          </div>
+          <div class="e-status"><span class="s-dot green"></span><span class="s-txt green">运行中</span></div>
+        </div>
+        <div class="env-card">
+          <div class="e-icon node"><svg viewBox="0 0 24 24"><use href="#i-node"/></svg></div>
+          <div class="e-info">
+            <div class="e-name">Node.js</div>
+            <div class="e-ver">20.11.0</div>
+          </div>
+          <div class="e-status"><span class="s-dot green"></span><span class="s-txt green">运行中</span></div>
+        </div>
+        <div class="env-card">
+          <div class="e-icon shell"><svg viewBox="0 0 24 24"><use href="#i-term"/></svg></div>
+          <div class="e-info">
+            <div class="e-name">Shell</div>
+            <div class="e-ver">bash 5.2</div>
+          </div>
+          <div class="e-status"><span class="s-dot green"></span><span class="s-txt green">运行中</span></div>
+        </div>
+        <div class="env-card">
+          <div class="e-icon harness"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg></div>
+          <div class="e-info">
+            <div class="e-name">DeepSeek Harness</div>
+            <div class="e-ver">127.0.0.1:3080</div>
+          </div>
+          <div class="e-status"><span class="s-dot green"></span><span class="s-txt green">运行中</span></div>
+        </div>
+        <div class="env-card">
+          <div class="e-icon codex"><svg viewBox="0 0 24 24"><use href="#i-code"/></svg></div>
+          <div class="e-info">
+            <div class="e-name">Codex</div>
+            <div class="e-ver">未安装</div>
+          </div>
+          <div class="e-status"><span class="s-dot gray"></span><span class="s-txt gray">未配置</span><span class="s-action">去配置</span></div>
+        </div>
+        <div class="env-card">
+          <div class="e-icon shell" style="background:#8B5CF6;"><svg viewBox="0 0 24 24"><use href="#i-ruby"/></svg></div>
+          <div class="e-info">
+            <div class="e-name">Ruby</div>
+            <div class="e-ver">版本不兼容</div>
+          </div>
+          <div class="e-status"><span class="s-dot red"></span><span class="s-txt red">配置失败</span></div>
         </div>
       </div>
       <div class="homebar"><span></span></div>
