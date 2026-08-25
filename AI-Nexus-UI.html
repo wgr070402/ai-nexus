@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Nexus · UI 高保真设计稿</title>
+<style>
+  :root{
+    --white:#FFFFFF;
+    --card:#F7F7F7;
+    --card-2:#F0F0F2;
+    --teal:#00C896;
+    --text:#1A1A1A;
+    --text-2:#8E8E93;
+    --text-3:#C7C7CC;
+    --r-lg:16px;
+    --r-md:12px;
+    --r-top:20px;
+    --shadow:0 2px 8px rgba(0,0,0,.06);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Inter","Microsoft YaHei",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#E9EAEE;
+    font-family:var(--font);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ===== 页头 ===== */
+  .doc-head{max-width:1180px;margin:0 auto;padding:40px 24px 8px;}
+  .doc-head h1{font-size:24px;margin:0 0 6px;letter-spacing:.5px;}
+  .doc-head .sub{color:var(--text-2);font-size:14px;margin:0 0 22px;}
+  .tokens{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px;}
+  .tok{background:var(--white);border-radius:12px;box-shadow:var(--shadow);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px;}
+  .swatch{width:26px;height:26px;border-radius:8px;border:1px solid rgba(0,0,0,.08);}
+  .tok b{font-weight:600;}
+  .tok span{color:var(--text-2);}
+
+  .changes{max-width:1180px;margin:18px auto 0;padding:0 24px;display:flex;gap:12px;flex-wrap:wrap;}
+  .chg{background:var(--white);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;flex:1;min-width:260px;font-size:13px;}
+  .chg h3{margin:0 0 8px;font-size:13px;letter-spacing:.5px;}
+  .chg.keep h3{color:var(--text);}
+  .chg.add h3{color:var(--teal);}
+  .chg.del h3{color:var(--text-2);}
+  .chg ul{margin:0;padding-left:18px;line-height:1.9;color:var(--text-2);}
+  .chg.add ul li{color:#0aa77e;}
+  .chg.del ul li{color:#b8b8bd;text-decoration:line-through;}
+
+  /* ===== 画板 ===== */
+  .board{max-width:1180px;margin:26px auto 60px;padding:0 24px;display:flex;flex-wrap:wrap;gap:28px 24px;justify-content:center;}
+  .frame{display:flex;flex-direction:column;align-items:center;}
+  .frame-label{font-size:13px;color:var(--text-2);margin-bottom:12px;font-weight:600;letter-spacing:.5px;}
+  .frame-label .tag{display:inline-block;background:rgba(0,200,150,.14);color:#0aa77e;font-size:11px;padding:2px 8px;border-radius:6px;margin-left:8px;font-weight:700;}
+
+  /* ===== 手机外壳 ===== */
+  .phone{
+    width:375px;min-height:812px;
+    background:var(--white);
+    border-radius:46px;
+    box-shadow:0 14px 40px rgba(0,0,0,.16), 0 2px 6px rgba(0,0,0,.06);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    position:relative;
+  }
+  .statusbar{height:48px;padding:14px 24px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+  .statusbar .time{font-size:14px;font-weight:600;}
+  .sb-icons{display:flex;align-items:center;gap:5px;}
+  .sb-icons svg{display:block;}
+
+  .body{flex:1;display:flex;flex-direction:column;}
+
+  .homebar{height:32px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;flex-shrink:0;}
+  .homebar span{width:134px;height:5px;border-radius:3px;background:rgba(0,0,0,.2);}
+
+  /* ===== 通用图标 ===== */
+  .icon{flex-shrink:0;color:#1A1A1A;}
+  .icon.lg{width:24px;height:24px;}
+  .icon.md{width:22px;height:22px;}
+  .icon.sm{width:18px;height:18px;}
+  .icon.chev{color:#C7C7CC;}
+
+  /* ===== 首页 ===== */
+  .home-top{padding:16px 16px 0;flex-shrink:0;}
+  .hamburger{width:44px;height:44px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);}
+  .home-empty{flex:1;}
+  .ai-note{text-align:center;font-size:12px;color:var(--text-3);padding:8px 0 10px;flex-shrink:0;}
+
+  /* ===== 输入栏 ===== */
+  .composer{padding:10px 10px 12px;flex-shrink:0;}
+  .composer-inner{
+    background:var(--white);
+    border:1px solid #ECECEC;
+    border-radius:999px;
+    box-shadow:var(--shadow);
+    display:flex;align-items:center;
+    padding:6px 8px;gap:6px;
+  }
+  .cbtn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1A1A1A;background:transparent;flex-shrink:0;}
+  .model-chip{
+    display:flex;align-items:center;gap:3px;
+    background:var(--card);border-radius:999px;
+    padding:6px 10px;font-size:13px;font-weight:600;color:var(--text);
+    flex-shrink:0;
+  }
+  .model-chip .icon{color:var(--text-2);}
+  .cinput{flex:1;font-size:15px;color:var(--text);outline:none;border:none;background:transparent;min-width:0;}
+  .cinput::placeholder{color:var(--text-3);}
+  .plus-btn{color:#1A1A1A;}
+  .send-btn{
+    width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .send-btn.off{color:var(--text-3);background:transparent;}
+  .send-btn.on{color:#fff;background:var(--teal);}
+
+  /* ===== 侧边栏 ===== */
+  .drawer{width:281px;min-height:812px;background:var(--white);box-shadow:8px 0 24px rgba(0,0,0,.08);border-radius:0 46px 46px 0;display:flex;flex-direction:column;overflow:hidden;}
+  .drawer-top{display:flex;align-items:center;gap:10px;padding:56px 20px 20px;}
+  .avatar{width:52px;height:52px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;flex-shrink:0;}
+  .avatar-gear{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#1A1A1A;margin-left:4px;}
+  .menu{display:flex;flex-direction:column;padding:6px 12px;}
+  .menu-item{display:flex;align-items:center;gap:14px;padding:13px 10px;border-radius:12px;font-size:16px;color:var(--text);}
+  .menu-item .icon{color:#1A1A1A;}
+  .menu-item .label{flex:1;text-align:left;}
+  .menu-item .chev{color:#C7C7CC;}
+  .divider{height:1px;background:#EFEFF1;margin:10px 16px;}
+  .task-head{display:flex;align-items:center;justify-content:space-between;padding:10px 22px 8px;}
+  .task-head .t-title{font-size:15px;font-weight:700;}
+  .task-head .t-edit{font-size:13px;color:var(--teal);font-weight:600;}
+  .task-add{margin:0 16px;display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card);border-radius:14px;font-size:15px;font-weight:600;}
+  .task-add .icon{color:var(--teal);}
+  .task-empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:14px;padding:30px 0;}
+
+  /* ===== 加号弹出菜单 ===== */
+  .sheet-wrap{position:relative;display:flex;flex-direction:column;min-height:812px;}
+  .sheet-scrim{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.28);}
+  .sheet{
+    position:absolute;left:0;right:0;bottom:0;
+    background:var(--white);border-radius:var(--r-top) var(--r-top) 0 0;
+    padding:12px 16px 26px;
+  }
+  .sheet-grab{width:36px;height:4px;border-radius:2px;background:#E4E4E6;margin:0 auto 18px;}
+  .sheet-big{display:flex;gap:12px;margin-bottom:16px;}
+  .sheet-big .b{
+    flex:1;background:var(--card);border-radius:16px;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    padding:18px 8px;font-size:13px;color:var(--text);font-weight:500;
+  }
+  .sheet-big .b .icon{color:#1A1A1A;width:26px;height:26px;}
+  .sheet-row{display:flex;align-items:center;gap:14px;padding:14px 6px;border-top:1px solid #F2F2F4;font-size:15px;color:var(--text);}
+  .sheet-row:first-of-type{border-top:none;}
+  .sheet-row .icon{color:#1A1A1A;}
+  .sheet-row .label{flex:1;text-align:left;}
+  .sheet-row .chev{color:#C7C7CC;}
+
+  /* ===== 设置页 ===== */
+  .nav{height:52px;display:flex;align-items:center;padding:0 8px;position:relative;flex-shrink:0;}
+  .nav-back{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#1A1A1A;}
+  .nav-title{position:absolute;left:50%;transform:translateX(-50%);font-size:17px;font-weight:700;}
+  .set-body{flex:1;padding:6px 12px 20px;display:flex;flex-direction:column;gap:14px;}
+  .group{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;}
+  .row{display:flex;align-items:center;gap:12px;padding:15px 16px;font-size:15px;color:var(--text);}
+  .row + .row{border-top:1px solid #ECECEE;}
+  .row .label{flex:1;text-align:left;}
+  .row .value{font-size:14px;color:var(--text-2);}
+  .row .chev{color:#C7C7CC;}
+  .row .new{font-size:11px;color:var(--teal);font-weight:700;margin-left:2px;flex-shrink:0;}
+
+  /* 主题分段控件 */
+  .theme-seg{display:flex;align-items:center;gap:12px;padding:14px 16px;}
+  .theme-seg .label{flex:1;text-align:left;font-size:15px;}
+  .seg{display:flex;background:#E7E7EA;border-radius:999px;padding:3px;gap:2px;}
+  .seg span{padding:6px 14px;font-size:13px;border-radius:999px;color:var(--text-2);white-space:nowrap;}
+  .seg span.on{background:var(--white);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.16);}
+
+  /* 单选行（引擎/模式选择） */
+  .opt{display:flex;align-items:center;gap:12px;padding:14px 16px;font-size:15px;color:var(--text);}
+  .opt + .opt{border-top:1px solid #ECECEE;}
+  .opt .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--text-3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .opt.on .dot{border-color:var(--teal);background:var(--teal);}
+  .opt.on .label{font-weight:600;}
+  .opt .label{flex:1;text-align:left;}
+  .opt .hint{font-size:12px;color:var(--text-3);}
+
+  /* 开关 */
+  .switch{width:46px;height:28px;border-radius:999px;background:var(--text-3);position:relative;flex-shrink:0;}
+  .switch.on{background:var(--teal);}
+  .switch .knob{position:absolute;top:2px;left:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+  .switch.on .knob{left:20px;}
+</style>
+</head>
+<body>
+
+<!-- ============ SVG 图标库 ============ -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8h16M4 16h16"/></symbol>
+    <symbol id="i-voice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9v6M8 6v12M12 3v18M16 6v12M20 9v6"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+    <symbol id="i-photo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></symbol>
+    <symbol id="i-skill" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></symbol>
+    <symbol id="i-expert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-project" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-term" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></symbol>
+    <symbol id="i-group" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-memory" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+  </defs>
+</svg>
+
+<!-- ============ 文档页头 ============ -->
+<div class="doc-head">
+  <h1>AI Nexus · UI 高保真设计稿</h1>
+  <p class="sub">375 × 812 · 极简白 · 扁平无渐变 · 主色 #00C896</p>
+  <div class="tokens">
+    <div class="tok"><i class="swatch" style="background:#FFFFFF"></i><b>白</b><span>#FFFFFF</span></div>
+    <div class="tok"><i class="swatch" style="background:#F7F7F7"></i><b>卡片</b><span>#F7F7F7</span></div>
+    <div class="tok"><i class="swatch" style="background:#00C896"></i><b>主色</b><span>#00C896</span></div>
+    <div class="tok"><i class="swatch" style="background:#1A1A1A"></i><b>主文字</b><span>#1A1A1A</span></div>
+    <div class="tok"><i class="swatch" style="background:#8E8E93"></i><b>次文字</b><span>#8E8E93</span></div>
+    <div class="tok"><i class="swatch" style="background:#C7C7CC"></i><b>占位</b><span>#C7C7CC</span></div>
+    <div class="tok"><b>圆角</b><span>卡片 16 · 按钮 12 · 面板 20</span></div>
+    <div class="tok"><b>字体</b><span>标题 17 粗 / 正文 15 / 小字 13</span></div>
+    <div class="tok"><b>阴影</b><span>0 2px 8px rgba(0,0,0,.06)</span></div>
+  </div>
+</div>
+
+<!-- ============ 变更说明 ============ -->
+<div class="changes">
+  <div class="chg keep">
+    <h3>按规范原样保留</h3>
+    <ul>
+      <li>首页汉堡键 / 底部输入栏 / "内容由 AI 生成"</li>
+      <li>侧边栏 专家 · 项目 / 任务区 / 齿轮移至头像右侧</li>
+      <li>输入栏 语音 · 模型切换 · 加号 · 发送（双状态）</li>
+      <li>加号菜单 拍照 · 照片视频 · 手机文件 · 专家中心</li>
+      <li>设置 记忆库 · 主题（系统/浅色/深色）· 语言 · 字体大小 · 帮助 · 消息通知 · 分享日志 · 清除日志 · 意见反馈</li>
+    </ul>
+  </div>
+  <div class="chg add">
+    <h3>本次补充的新增配置（同格式）</h3>
+    <ul>
+      <li>侧边栏 终端 · 群聊（新增入口）</li>
+      <li>加号菜单 技能 Skill（新增）</li>
+      <li>设置 模型与引擎（本地模型 / DSH / Codex / Codex++）</li>
+      <li>设置 终端环境（多环境 / 自定义 rootfs）</li>
+      <li>设置 群聊（并行/讨论 · 上限 10）</li>
+      <li>设置 智能体/专家 · 知识库/技能/工作流 · 搜索/多模态/语音</li>
+    </ul>
+  </div>
+  <div class="chg del">
+    <h3>已按规范删除（原 WorkBuddy）</h3>
+    <ul>
+      <li>首页机器人 / "WorkBuddy 我帮你" / 云端·电脑切换 / 四快捷</li>
+      <li>侧边栏 咖啡名 / 体验版 / 自动化 / 积分余额</li>
+      <li>加号菜单 腾讯文档 / ima 知识库 / 定时任务</li>
+      <li>设置 我的分享 / 下载电脑版 / 隐私 / 协议 / 存储空间 / 底部版权</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 画板 ============ -->
+<div class="board">
+
+  <!-- 页面一 · 首页 -->
+  <div class="frame">
+    <div class="frame-label">页面一 · 首页</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <div class="home-top">
+          <div class="hamburger"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-menu"/></svg></div>
+        </div>
+        <div class="home-empty"></div>
+        <div class="ai-note">内容由 AI 生成</div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <div class="model-chip">Auto<svg class="icon sm" viewBox="0 0 24 24"><use href="#i-down"/></svg></div>
+            <input class="cinput" placeholder="发消息或按住说话" />
+            <div class="cbtn plus-btn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页面二 · 侧边栏 -->
+  <div class="frame">
+    <div class="frame-label">页面二 · 侧边栏<span class="tag">含新增：终端 / 群聊</span></div>
+    <div class="drawer">
+      <div class="drawer-top">
+        <div class="avatar">咖</div>
+        <div class="avatar-gear"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-gear"/></svg></div>
+      </div>
+      <div class="menu">
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-expert"/></svg><span class="label">专家</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-project"/></svg><span class="label">项目</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-term"/></svg><span class="label">终端</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="menu-item"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-group"/></svg><span class="label">群聊</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+      </div>
+      <div class="divider"></div>
+      <div class="task-head">
+        <span class="t-title">任务</span>
+        <span class="t-edit">完成编辑</span>
+      </div>
+      <div class="task-add"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-plus"/></svg><span>新建任务</span></div>
+      <div class="task-empty">暂无云端任务</div>
+    </div>
+  </div>
+
+  <!-- 页面三 · 输入栏（空状态） -->
+  <div class="frame">
+    <div class="frame-label">页面三 · 聊天输入栏（空状态 → 发送灰色）</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <div class="home-empty" style="min-height:200px"></div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <div class="model-chip">Auto<svg class="icon sm" viewBox="0 0 24 24"><use href="#i-down"/></svg></div>
+            <input class="cinput" placeholder="发消息..." />
+            <div class="cbtn plus-btn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <div class="send-btn off"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页面三 · 输入栏（激活状态） -->
+  <div class="frame">
+    <div class="frame-label">页面三 · 聊天输入栏（有内容 → 发送青绿色）</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="body">
+        <div class="home-empty" style="min-height:200px"></div>
+        <div class="composer">
+          <div class="composer-inner">
+            <div class="cbtn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-voice"/></svg></div>
+            <div class="model-chip">Auto<svg class="icon sm" viewBox="0 0 24 24"><use href="#i-down"/></svg></div>
+            <input class="cinput" value="帮我写一段代码" />
+            <div class="cbtn plus-btn"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-plus"/></svg></div>
+            <div class="send-btn on"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-send"/></svg></div>
+          </div>
+        </div>
+        <div class="homebar"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页面三 · 加号弹出菜单 -->
+  <div class="frame">
+    <div class="frame-label">页面三 · 加号弹出菜单<span class="tag">含新增：技能 Skill</span></div>
+    <div class="phone sheet-wrap">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="body" style="flex:1;background:#fff"></div>
+      <div class="sheet-scrim"></div>
+      <div class="sheet">
+        <div class="sheet-grab"></div>
+        <div class="sheet-big">
+          <div class="b"><svg class="icon" viewBox="0 0 24 24"><use href="#i-camera"/></svg><span>拍照</span></div>
+          <div class="b"><svg class="icon" viewBox="0 0 24 24"><use href="#i-photo"/></svg><span>照片 / 视频</span></div>
+          <div class="b"><svg class="icon" viewBox="0 0 24 24"><use href="#i-file"/></svg><span>手机文件</span></div>
+        </div>
+        <div class="sheet-row"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-skill"/></svg><span class="label">技能 Skill</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        <div class="sheet-row"><svg class="icon md" viewBox="0 0 24 24"><use href="#i-expert"/></svg><span class="label">专家中心</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页面四 · 设置页 -->
+  <div class="frame">
+    <div class="frame-label">页面四 · 设置页</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">设置</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="row"><span class="label">记忆库</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="theme-seg">
+            <span class="label">主题</span>
+            <div class="seg"><span class="on">系统</span><span>浅色</span><span>深色</span></div>
+          </div>
+          <div class="row"><span class="label">语言</span><span class="value">跟随系统</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">字体大小</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">使用帮助</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">消息通知设置</span><span class="value">已开启</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">分享日志</span><span class="value">按时间范围导出</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">清除日志</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">意见反馈</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- ============ 补充配置子页面 ============ -->
+
+  <!-- 模型与引擎 -->
+  <div class="frame">
+    <div class="frame-label">补充 · 模型与引擎</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">模型与引擎</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="opt on"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" style="color:#fff"><use href="#i-check"/></svg></span><span class="label">本地 / 云端模型</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">DSH</span><span class="hint">DeepSeek Harness</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">Codex</span><span class="hint">OpenAI CLI</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">Codex++</span><span class="hint">增强启动器</span></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">供应商</span><span class="value">DeepSeek</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">API Key</span><span class="value">已配置</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">Base URL</span><span class="value">api.deepseek.com/v1</span></div>
+          <div class="row"><span class="label">模型名</span><span class="value">deepseek-chat</span></div>
+          <div class="row"><span class="label">测试连接</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">DSH 服务地址</span><span class="value">127.0.0.1:3080</span></div>
+          <div class="row"><span class="label">Codex 启动命令</span><span class="value">codex</span></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 终端环境 -->
+  <div class="frame">
+    <div class="frame-label">补充 · 终端环境</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">终端环境</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="opt on"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" style="color:#fff"><use href="#i-check"/></svg></span><span class="label">Ubuntu 24.04</span><span class="hint">当前</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">Debian 12</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">Alpine 3.20</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">Kali</span></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">Python 版本</span><span class="value">3.12</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">Node 版本</span><span class="value">20</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">默认 Shell</span><span class="value">bash</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">导入自定义 rootfs</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">挂载文件系统</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">SSH 服务</span><span class="switch off" style="width:46px"><span class="knob"></span></span></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 群聊 -->
+  <div class="frame">
+    <div class="frame-label">补充 · 群聊</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">群聊</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="opt on"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" style="color:#fff"><use href="#i-check"/></svg></span><span class="label">并行</span><span class="hint">成员同时回复</span></div>
+          <div class="opt"><span class="dot"></span><span class="label">讨论式</span><span class="hint">按顺序轮流发言</span></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">成员上限</span><span class="value">10</span></div>
+          <div class="row"><span class="label">模型库</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">智能体库</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 智能体 / 专家 -->
+  <div class="frame">
+    <div class="frame-label">补充 · 智能体 / 专家</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">智能体 / 专家</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="row"><span class="label">代码专家</span><span class="value">已启用</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">写作助手</span><span class="value">已启用</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">新建智能体</span><span class="value" style="color:var(--teal)">+ 添加</span></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">角色卡导入</span><span class="value">Silly Tavern</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 知识库 / 技能 / 工作流 -->
+  <div class="frame">
+    <div class="frame-label">补充 · 知识库 / 技能 / 工作流</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">知识库 / 技能 / 工作流</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="row"><span class="label">知识库</span><span class="value">3 条</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">技能 Skills</span><span class="value">快速选 /</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+          <div class="row"><span class="label">导入 / 导出</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">工作流 Workflow</span><span class="value">2 条</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+  <!-- 搜索 / 多模态 / 语音 -->
+  <div class="frame">
+    <div class="frame-label">补充 · 搜索 / 多模态 / 语音</div>
+    <div class="phone">
+      <div class="statusbar">
+        <span class="time">9:41</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="7" width="3" height="5" rx="1" fill="#1A1A1A"/><rect x="5" y="5" width="3" height="7" rx="1" fill="#1A1A1A"/><rect x="10" y="3" width="3" height="9" rx="1" fill="#1A1A1A"/><rect x="15" y="0" width="3" height="12" rx="1" fill="#1A1A1A"/></svg>
+          <svg width="28" height="12" viewBox="0 0 28 12"><rect x="0.5" y="7.5" width="25" height="11" rx="3" fill="none" stroke="#1A1A1A" stroke-width="1.2"/><rect x="2.5" y="9.5" width="15" height="7" rx="1.5" fill="#1A1A1A"/></svg>
+        </span>
+      </div>
+      <div class="nav">
+        <div class="nav-back"><svg class="icon lg" viewBox="0 0 24 24"><use href="#i-back"/></svg></div>
+        <div class="nav-title">搜索 / 多模态 / 语音</div>
+      </div>
+      <div class="set-body">
+        <div class="group">
+          <div class="row"><span class="label">联网搜索</span><span class="switch on"><span class="knob"></span></span></div>
+          <div class="row"><span class="label">搜索引擎</span><span class="value">Tavily</span><svg class="icon sm chev" viewBox="0 0 24 24"><use href="#i-chev"/></svg></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">图片识别</span><span class="switch on"><span class="knob"></span></span></div>
+          <div class="row"><span class="label">PDF 解析</span><span class="switch on"><span class="knob"></span></span></div>
+        </div>
+        <div class="group">
+          <div class="row"><span class="label">语音朗读 TTS</span><span class="switch off"><span class="knob"></span></span></div>
+          <div class="row"><span class="label">语音输入 ASR</span><span class="switch off"><span class="knob"></span></span></div>
+        </div>
+      </div>
+      <div class="homebar"><span></span></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
